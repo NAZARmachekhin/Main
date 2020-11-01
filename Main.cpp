@@ -4,7 +4,7 @@ using namespace std;
 struct number
 {
     int num = 0;
-    bool first_half = true;
+    int id = 0;
 };
 
 number m[100000];
@@ -15,8 +15,19 @@ void fill_arr(number m[], int& n)
     for (int i = 0; i < n; i++)
     {
         cin >> m[i].num;
-        if (i >= n / 2) m[i].first_half = false;
+        m[i].id = i;
     }
+}
+
+int sum_of_digits(int n)
+{
+    int sum = 0;
+    while (n > 0)
+    {
+        sum += n % 10;
+        n /= 10;
+    }
+    return sum;
 }
 
 void out_arr(number m[], int n)
@@ -30,9 +41,10 @@ void out_arr(number m[], int n)
 
 bool comporator(number a, number b)
 {
-    if (a.first_half && !b.first_half) return true;
-    if (a.first_half && b.first_half && a.num < b.num) return true;
-    if (!a.first_half && !b.first_half && a.num > b.num) return true;
+    int sumA = sum_of_digits(a.num);
+    int sumB = sum_of_digits(b.num);
+    if (sumA > sumB) return true;
+    if (sumA == sumB && a.id < b.id) return true;
     return false;
 }
 
