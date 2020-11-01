@@ -7,7 +7,7 @@ struct number
     int id = 0;
 };
 
-number m[100000];
+number m[100001];
 
 void fill_arr(number m[], int& n)
 {
@@ -19,16 +19,6 @@ void fill_arr(number m[], int& n)
     }
 }
 
-int sum_of_digits(int n)
-{
-    int sum = 0;
-    while (n > 0)
-    {
-        sum += n % 10;
-        n /= 10;
-    }
-    return sum;
-}
 
 void out_arr(number m[], int n)
 {
@@ -39,19 +29,45 @@ void out_arr(number m[], int n)
     cout << "\n";
 }
 
+void divide_groups(number m[], int n)
+{
+    swap(m[0], m[1]);
+    for (int i = 1, j = 3; j<n; i ++, j +=2)
+    {
+        swap(m[i], m[j]);
+    }
+}
+
 bool comporator(number a, number b)
 {
-    int sumA = sum_of_digits(a.num);
-    int sumB = sum_of_digits(b.num);
-    if (sumA > sumB) return true;
-    if (sumA == sumB && a.id < b.id) return true;
+    if (a.num < b.num)return true;
     return false;
+}
+
+bool sort_by_id(number a, number b)
+{
+    if (a.id < b.id) return true;
+    return false;
+}
+
+void restore_id(number m[], int n)
+{
+    for (int i = n / 2, cnt = 0; i < n; i++, cnt += 2)
+    {
+        m[i].id = cnt;
+    }
 }
 
 int main()
 {
+    cin.tie(0); cout.tie(0); ios_base::sync_with_stdio(0);
     int n;
     fill_arr(m, n);
-    sort(m, m + n, comporator);
+    divide_groups(m, n);
+    sort(m + n / 2, m + n, comporator);
+    restore_id(m, n);
+    sort(m, m + n, sort_by_id);
     out_arr(m, n);
 }
+
+
