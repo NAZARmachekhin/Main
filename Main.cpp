@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 10000;
+const int Nmax = 10001;
 
 struct Tlong
 {
@@ -36,8 +36,8 @@ void out_long(Tlong n)
     {
         cout << n.num[Nmax - n.len + i];
     }
+    cout << "\n";
 }
-
 
 
 int compare(Tlong a, Tlong b)
@@ -61,15 +61,41 @@ int compare(Tlong a, Tlong b)
     return 0;
 }
 
-Tlong a, b;
+Tlong substract_abs(Tlong dec, Tlong sub)
+{
+    Tlong res;
+    dec.sign = '+';
+    sub.sign = '+';
+    if (compare(dec, sub) == 0)
+    {
+        res.len = 1;
+        res.num[Nmax - 1] = 0;
+        return res;
+    }
+    if (compare(dec, sub) == -1)
+    {
+        res.sign = '-';
+        swap(dec, sub);
+    }
+    res.len = dec.len;
+    for (int i = 1; i <= dec.len; i++)
+    {
+        if (dec.num[Nmax - i] < sub.num[Nmax - i])
+        {
+            dec.num[Nmax - i - 1]--;
+            dec.num[Nmax - i]+=10;
+        }
+        res.num[Nmax - i] = dec.num[Nmax - i] - sub.num[Nmax - i];
+    }
+    while (res.num[Nmax - res.len] == 0) res.len--;
+    return res;
+
+}
+
+Tlong decreasing, subtractor;
 int main()
 {
-    input_long(a);
-    input_long(b);
-    out_long(a);
-    if (compare(a, b) == 1)cout << ">";
-    else if (compare(a, b) == -1)cout << "<";
-    else cout << "=";
-    out_long(b);
-    cout << "\n";
+    input_long(decreasing);
+    input_long(subtractor);
+    out_long(substract_abs(decreasing, subtractor));
 }
