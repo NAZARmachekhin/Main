@@ -10,21 +10,24 @@ struct Tlong
     int num[Nmax] = { 0 };
 };
 
-void input_long(Tlong& n)
+void input_two_long(Tlong& n, Tlong &m)
 {
     string s;
     cin >> s;
-    if (s[0] == '+' || s[0] == '-')
-    {
-        if (s[1] != '0')n.sign = s[0];
-        else n.sign = '+';
-        s.erase(0, 1);
-    }
-    else n.sign = '+';
-    n.len = (s.size());
-    for (int i = 0; i < s.size(); i++)
+    int cnt = 0;
+    n.sign = '+';
+    while (s[cnt] != '+' && s[cnt] != '-') cnt++;
+    n.len = cnt;
+    for (int i = 0; i < n.len; i++)
     {
         n.num[Nmax - n.len + i] = s[i] - 48;
+    }
+    m.sign = s[cnt];
+    s.erase(cnt, 1);
+    m.len = (s.size() - cnt);
+    for (int i = 0; i < m.len; i++)
+    {
+        m.num[Nmax - m.len + i] = s[cnt + i] - 48;
     }
 }
 
@@ -92,10 +95,38 @@ Tlong substract_abs(Tlong dec, Tlong sub)
 
 }
 
+Tlong add_abs(Tlong a, Tlong b)
+{
+    a.sign = '+';
+    b.sign = '+';
+    Tlong res;
+    res.sign = '+';
+    res.len = max(a.len, b.len) + 2;
+    for (int i = 0; i < res.len; i++)
+    {
+        res.num[Nmax - i - 1] = (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) % 10;
+        a.num[Nmax - i - 2] += (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
+    }
+    while (res.num[Nmax - res.len] == 0)res.len--;
+    return res;
+}
+
 Tlong decreasing, subtractor;
 int main()
 {
-    input_long(decreasing);
-    input_long(subtractor);
-    out_long(substract_abs(decreasing, subtractor));
+    int cnt;
+    cin >> cnt;
+    for (int i = 0; i < cnt; i++)
+    {
+        input_two_long(decreasing, subtractor);
+        if (subtractor.sign == '-')
+        {
+            subtractor.sign = '+';
+            out_long(substract_abs(decreasing, subtractor));
+        }
+        else
+        {
+            out_long(add_abs(subtractor, decreasing));
+        }
+    }
 }
