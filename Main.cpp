@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 10001;
+const int Nmax = 100000;
 
 struct Tlong
 {
@@ -10,123 +10,63 @@ struct Tlong
     int num[Nmax] = { 0 };
 };
 
-void input_two_long(Tlong& n, Tlong &m)
+void input_long(Tlong& n)
 {
     string s;
     cin >> s;
-    int cnt = 0;
-    n.sign = '+';
-    while (s[cnt] != '+' && s[cnt] != '-') cnt++;
-    n.len = cnt;
-    for (int i = 0; i < n.len; i++)
+    if (s[0] == '+' || s[0] == '-')
+    {
+        n.sign = s[0];
+        s.erase(0, 1);
+    }
+    else n.sign = '+';
+    n.len = (s.size());
+    for (int i = 0; i < s.size(); i++)
     {
         n.num[Nmax - n.len + i] = s[i] - 48;
-    }
-    m.sign = s[cnt];
-    s.erase(cnt, 1);
-    m.len = (s.size() - cnt);
-    for (int i = 0; i < m.len; i++)
-    {
-        m.num[Nmax - m.len + i] = s[cnt + i] - 48;
     }
 }
 
 
-void out_long(Tlong n)
+void out_long(Tlong& n)
 {
     if (n.sign == '-') cout << '-';
     for (int i = 0; i < n.len; i++)
     {
         cout << n.num[Nmax - n.len + i];
     }
-    cout << "\n";
+    
 }
 
-
-int compare(Tlong a, Tlong b)
+void plusplus(Tlong& n)
 {
-    if (a.sign != b.sign)
+    int cnt = Nmax-1;
+    while(n.num[cnt]==9)
     {
-        if (a.sign == '+') return 1;
-        return -1;
+        n.num[cnt] = 0;
+        cnt--;
     }
-    int sign = 1 - 2 * int(a.sign == '-');
-    if (a.len != b.len)
-    {
-        if (a.len > b.len) return 1*sign;
-        return -1*sign;
-    }
-    for (int i = 0; i < a.len; i++)
-    {
-        if (a.num[Nmax - a.len + i] > b.num[Nmax - b.len + i]) return 1 * sign;
-        if (a.num[Nmax - a.len + i] < b.num[Nmax - b.len + i])  return -1 * sign;
-    }
-    return 0;
+    n.num[cnt]++;
+    if (n.num[Nmax - n.len- 1])n.len++;
 }
 
-Tlong substract_abs(Tlong dec, Tlong sub)
-{
-    Tlong res;
-    dec.sign = '+';
-    sub.sign = '+';
-    if (compare(dec, sub) == 0)
-    {
-        res.len = 1;
-        res.num[Nmax - 1] = 0;
-        return res;
-    }
-    if (compare(dec, sub) == -1)
-    {
-        res.sign = '-';
-        swap(dec, sub);
-    }
-    res.len = dec.len;
-    for (int i = 1; i <= dec.len; i++)
-    {
-        if (dec.num[Nmax - i] < sub.num[Nmax - i])
-        {
-            dec.num[Nmax - i - 1]--;
-            dec.num[Nmax - i]+=10;
-        }
-        res.num[Nmax - i] = dec.num[Nmax - i] - sub.num[Nmax - i];
-    }
-    while (res.num[Nmax - res.len] == 0) res.len--;
-    return res;
 
-}
 
-Tlong add_abs(Tlong a, Tlong b)
-{
-    a.sign = '+';
-    b.sign = '+';
-    Tlong res;
-    res.sign = '+';
-    res.len = max(a.len, b.len) + 2;
-    for (int i = 0; i < res.len; i++)
-    {
-        res.num[Nmax - i - 1] = (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) % 10;
-        a.num[Nmax - i - 2] += (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
-    }
-    while (res.num[Nmax - res.len] == 0)res.len--;
-    return res;
-}
 
-Tlong decreasing, subtractor;
+Tlong num;
 int main()
 {
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
     int cnt;
     cin >> cnt;
     for (int i = 0; i < cnt; i++)
     {
-        input_two_long(decreasing, subtractor);
-        if (subtractor.sign == '-')
-        {
-            subtractor.sign = '+';
-            out_long(substract_abs(decreasing, subtractor));
-        }
-        else
-        {
-            out_long(add_abs(subtractor, decreasing));
-        }
+        input_long(num);
+        plusplus(num);
+        out_long(num);
+        cout << "\n";
+        fill(num.num, num.num + Nmax, 0);
     }
 }
