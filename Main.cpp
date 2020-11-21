@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 1000;
+const int Nmax = 500;
 
 struct Tlong
 {
@@ -60,18 +60,6 @@ int compare(Tlong a, Tlong b)
 }
 
 
-void multiply_halflong_abs(Tlong& a, int b)
-{
-    int next = 0;
-    int multiply = 0;
-    for (int i = 1; i <= Nmax; i++)
-    {
-        multiply=(a.num[Nmax - i] * b + next);
-        a.num[Nmax - i] = multiply % 10;
-        next = multiply / 10;
-        if (a.num[Nmax - i])a.len = i;
-    }
-}
 
 
 void divide_halflong_abs(Tlong &a, int b, Tlong& result)
@@ -96,31 +84,24 @@ void divide_halflong_abs(Tlong &a, int b, Tlong& result)
     }
 }
 
-void mod_halflong_abs(Tlong& a, int b, int& res)
-{
-    if (b == 0) res = 0;
-    else
-    {
-        int dif = 0;
-        for (int i = 0; i < a.len; i++)
-        {
-            dif = dif * 10 + a.num[Nmax - a.len + i];
-            dif = dif % b;
-        }
-        res = dif;
-    }
-}
 
-Tlong num;
+
+Tlong cell1, cell2;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int divider,mod;
-    input_long(num);
-    cin >> divider;
-    mod_halflong_abs(num, divider, mod);
-    if (!mod) mod = divider;
-    cout << mod << "\n";
+    int gen;
+    cin >> gen;
+    input_long(cell1);
+    input_long(cell2);
+    int comp_res = compare(cell1,cell2);
+    while (comp_res)
+    {
+        if (comp_res == -1)swap(cell1, cell2);
+        divide_halflong_abs(cell1, 2, cell1);
+        comp_res = compare(cell1, cell2);
+    }
+    out_long(cell1);
 }
