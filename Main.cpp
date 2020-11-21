@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 2700;
+const int Nmax = 2000;
 
 struct Tlong
 {
@@ -65,29 +65,55 @@ void multiply_halflong_abs(Tlong& a, int b)
 }
 
 
-
-
-
-void factorial(int a, Tlong& res)
+int compare(Tlong a, Tlong b)
 {
-    res.len = 1;
-    res.num[Nmax - 1] = 1;
-    res.sign = '+';
-    while (a != 0)
+    if (a.sign != b.sign)
     {
-        multiply_halflong_abs(res, a);
-        a--;
+        if (a.sign == '+') return 1;
+        return -1;
     }
+    int sign = 1 - 2 * int(a.sign == '-');
+    if (a.len != b.len)
+    {
+        if (a.len > b.len) return 1 * sign;
+        return -1 * sign;
+    }
+    for (int i = 0; i < a.len; i++)
+    {
+        if (a.num[Nmax - a.len + i] > b.num[Nmax - b.len + i]) return 1 * sign;
+        if (a.num[Nmax - a.len + i] < b.num[Nmax - b.len + i])  return -1 * sign;
+    }
+    return 0;
 }
 
-Tlong num;
+int max_long(Tlong arr[], int len)
+{
+    int max = 0;
+    for (int i = 1; i < len; i++)
+    {
+        if (compare(arr[max], arr[i]) == -1)max = i;
+    }
+    return max;
+}
+
+Tlong groups[200];
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int a;
-    cin >> a;
-    factorial(a, num);
-    out_long(num);
+    int groups_cnt, score_cnt, score;
+    cin >> groups_cnt >> score_cnt;
+    for (int i = 0; i < groups_cnt; i++)
+    {
+        groups[i].len = 1;
+        groups[i].num[Nmax - 1] = 1;
+        groups[i].sign = '+';
+        for (int j = 0; j < score_cnt; j++)
+        {
+            cin >> score;
+            multiply_halflong_abs(groups[i], score);
+        }
+    }
+    cout << max_long(groups, groups_cnt)+1 << "\n";
 }
