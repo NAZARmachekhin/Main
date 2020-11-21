@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 100000;
+const int Nmax = 2700;
 
 struct Tlong
 {
@@ -51,7 +51,34 @@ void plusplus(Tlong& n)
 }
 
 
+void multiply_halflong_abs(Tlong& a, int b)
+{
+    int next = 0;
+    int multiply = 0;
+    for (int i = 1; i <= Nmax; i++)
+    {
+        multiply=(a.num[Nmax - i] * b + next);
+        a.num[Nmax - i] = multiply % 10;
+        next = multiply / 10;
+        if (a.num[Nmax - i])a.len = i;
+    }
+}
 
+
+
+
+
+void factorial(int a, Tlong& res)
+{
+    res.len = 1;
+    res.num[Nmax - 1] = 1;
+    res.sign = '+';
+    while (a != 0)
+    {
+        multiply_halflong_abs(res, a);
+        a--;
+    }
+}
 
 Tlong num;
 int main()
@@ -59,14 +86,8 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int cnt;
-    cin >> cnt;
-    for (int i = 0; i < cnt; i++)
-    {
-        input_long(num);
-        plusplus(num);
-        out_long(num);
-        cout << "\n";
-        fill(num.num, num.num + Nmax, 0);
-    }
+    int a;
+    cin >> a;
+    factorial(a, num);
+    out_long(num);
 }
