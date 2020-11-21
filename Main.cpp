@@ -1,12 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 2000;
+const int Nmax = 1000;
 
 struct Tlong
 {
     int len = 0;
-    char sign;
+    char sign='+';
     int num[Nmax] = { 0 };
 };
 
@@ -38,33 +38,6 @@ void out_long(Tlong& n)
     
 }
 
-void plusplus(Tlong& n)
-{
-    int cnt = Nmax-1;
-    while(n.num[cnt]==9)
-    {
-        n.num[cnt] = 0;
-        cnt--;
-    }
-    n.num[cnt]++;
-    if (n.num[Nmax - n.len- 1])n.len++;
-}
-
-
-void multiply_halflong_abs(Tlong& a, int b)
-{
-    int next = 0;
-    int multiply = 0;
-    for (int i = 1; i <= Nmax; i++)
-    {
-        multiply=(a.num[Nmax - i] * b + next);
-        a.num[Nmax - i] = multiply % 10;
-        next = multiply / 10;
-        if (a.num[Nmax - i])a.len = i;
-    }
-}
-
-
 int compare(Tlong a, Tlong b)
 {
     if (a.sign != b.sign)
@@ -86,34 +59,68 @@ int compare(Tlong a, Tlong b)
     return 0;
 }
 
-int max_long(Tlong arr[], int len)
+
+void multiply_halflong_abs(Tlong& a, int b)
 {
-    int max = 0;
-    for (int i = 1; i < len; i++)
+    int next = 0;
+    int multiply = 0;
+    for (int i = 1; i <= Nmax; i++)
     {
-        if (compare(arr[max], arr[i]) == -1)max = i;
+        multiply=(a.num[Nmax - i] * b + next);
+        a.num[Nmax - i] = multiply % 10;
+        next = multiply / 10;
+        if (a.num[Nmax - i])a.len = i;
     }
-    return max;
 }
 
-Tlong groups[200];
+
+void divide_halflong_abs(Tlong &a, int b, Tlong& result)
+{
+    if (b == 0)
+    {
+        result.len = 1;
+        result.num[Nmax - 1] = 0;
+        result.sign = '+';
+    }
+    else
+    {
+        int dif = 0;
+        for (int i = 0; i < a.len; i++)
+        {
+            dif = dif * 10 + a.num[Nmax - a.len + i];
+            result.num[Nmax - a.len + i] = dif / b;
+            dif = dif % b;
+        }
+        result.len = a.len;
+        while (result.num[Nmax - result.len] == 0)result.len--;
+    }
+}
+
+void mod_halflong_abs(Tlong& a, int b, int& res)
+{
+    if (b == 0) res = 0;
+    else
+    {
+        int dif = 0;
+        for (int i = 0; i < a.len; i++)
+        {
+            dif = dif * 10 + a.num[Nmax - a.len + i];
+            dif = dif % b;
+        }
+        res = dif;
+    }
+}
+
+Tlong num;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int groups_cnt, score_cnt, score;
-    cin >> groups_cnt >> score_cnt;
-    for (int i = 0; i < groups_cnt; i++)
-    {
-        groups[i].len = 1;
-        groups[i].num[Nmax - 1] = 1;
-        groups[i].sign = '+';
-        for (int j = 0; j < score_cnt; j++)
-        {
-            cin >> score;
-            multiply_halflong_abs(groups[i], score);
-        }
-    }
-    cout << max_long(groups, groups_cnt)+1 << "\n";
+    int divider,mod;
+    input_long(num);
+    cin >> divider;
+    mod_halflong_abs(num, divider, mod);
+    if (!mod) mod = divider;
+    cout << mod << "\n";
 }
