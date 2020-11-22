@@ -6,7 +6,7 @@ const int Nmax = 30001;
 struct Tlong
 {
     int len = 0;
-    char sign='+';
+    char sign = '+';
     int num[Nmax] = { 0 };
 };
 
@@ -35,11 +35,11 @@ void out_long(Tlong& n)
     {
         cout << n.num[Nmax - n.len + i];
     }
-    
+
 }
 
 
-void add_abs(Tlong a, Tlong b, Tlong &res)
+void add_abs(Tlong a, Tlong b, Tlong& res)
 {
     res.len = max(a.len, b.len) + 1;
     for (int i = 0; i < res.len; i++)
@@ -52,23 +52,33 @@ void add_abs(Tlong a, Tlong b, Tlong &res)
 
 
 
-void fibonachi(int n, Tlong &fib0, Tlong& fib1,Tlong& res)
+void fibonachi(int n, Tlong& res)
 {
-    fib1.len = 1;
-    res.len = 1;
-    fib1.num[Nmax - 1] = 1;
-    res.num[Nmax - 1] = 1;
-    while (n)
+    if (n == 0)
     {
-        fib0 = res;
-        add_abs(res, fib1, res);
-        fib1 = fib0;
+        res.len = 1;
+        res.num[Nmax - 1] = 1;
+    }
+    else
+    {
+        Tlong fib0, fib1;
+        fib1.len = 0;
+        res.len = 1;
+        fib1.num[Nmax - 1] = 1;
+        res.num[Nmax - 1] = 1;
         n--;
+        while (n)
+        {
+            fib0 = res;
+            add_abs(res, fib1, res);
+            fib1 = fib0;
+            n--;
+        }
     }
 }
 
 
-Tlong res, fib0,fib1;
+Tlong res;
 int main()
 {
     ios_base::sync_with_stdio(0);
@@ -76,6 +86,6 @@ int main()
     cout.tie(0);
     int n;
     cin >> n;
-    fibonachi(n,fib0, fib1, res);
+    fibonachi(n + 1, res);
     out_long(res);
 }
