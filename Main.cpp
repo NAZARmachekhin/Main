@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 30001;
+const int Nmax = 100000;
 
 struct Tlong
 {
@@ -50,42 +50,51 @@ void add_abs(Tlong a, Tlong b, Tlong& res)
     if (res.num[Nmax - res.len] == 0)res.len--;
 }
 
-
-
-void fibonachi(int n, Tlong& res)
+void multiply_halflong_abs(Tlong& a, int b)
 {
-    if (n == 0)
+    int next = 0;
+    int multiply = 0;
+    for (int i = 1; i <= a.len; i++)
     {
-        res.len = 1;
-        res.num[Nmax - 1] = 1;
+        multiply = (a.num[Nmax - i] * b + next);
+        a.num[Nmax - i] = multiply % 10;
+        next = multiply / 10;
     }
-    else
+    while (next)
     {
-        Tlong fib0, fib1;
-        fib1.len = 0;
-        res.len = 1;
-        fib1.num[Nmax - 1] = 1;
-        res.num[Nmax - 1] = 1;
-        n--;
-        while (n)
-        {
-            fib0 = res;
-            add_abs(res, fib1, res);
-            fib1 = fib0;
-            n--;
-        }
+        a.len++;
+        multiply = (a.num[Nmax - a.len] * b + next);
+        a.num[Nmax - a.len] = multiply % 10;
+        next = multiply / 10;
     }
 }
 
+void to_long(Tlong& n, int a)
+{
+    if (a >= 0)n.sign = '+';
+    else n.sign = '-';
+    n.len = to_string(a).size();
+    for (int i = 1; i <= n.len; i++)
+    {
+        n.num[Nmax - i] = a % 10;
+        a /= 10;
+    }
+}
 
-Tlong res;
+Tlong res, start;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int n;
-    cin >> n;
-    fibonachi(n + 1, res);
+    res.len = 1;
+    res.num[Nmax - 1] = 1;
+    int sidek, siden;
+    cin >> sidek >> siden;
+    to_long(res, siden);
+    for (int i = siden-1; i >= siden-sidek+1; i--)
+    {
+        multiply_halflong_abs(res, i);
+    }
     out_long(res);
 }
