@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 500;
+const int Nmax = 30001;
 
 struct Tlong
 {
@@ -38,70 +38,44 @@ void out_long(Tlong& n)
     
 }
 
-int compare(Tlong a, Tlong b)
+
+void add_abs(Tlong a, Tlong b, Tlong &res)
 {
-    if (a.sign != b.sign)
+    res.len = max(a.len, b.len) + 1;
+    for (int i = 0; i < res.len; i++)
     {
-        if (a.sign == '+') return 1;
-        return -1;
+        res.num[Nmax - i - 1] = (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) % 10;
+        a.num[Nmax - i - 2] += (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
     }
-    int sign = 1 - 2 * int(a.sign == '-');
-    if (a.len != b.len)
-    {
-        if (a.len > b.len) return 1 * sign;
-        return -1 * sign;
-    }
-    for (int i = 0; i < a.len; i++)
-    {
-        if (a.num[Nmax - a.len + i] > b.num[Nmax - b.len + i]) return 1 * sign;
-        if (a.num[Nmax - a.len + i] < b.num[Nmax - b.len + i])  return -1 * sign;
-    }
-    return 0;
+    if (res.num[Nmax - res.len] == 0)res.len--;
 }
 
 
 
-
-void divide_halflong_abs(Tlong &a, int b, Tlong& result)
+void fibonachi(int n, Tlong &fib0, Tlong& fib1,Tlong& res)
 {
-    if (b == 0)
+    fib1.len = 1;
+    res.len = 1;
+    fib1.num[Nmax - 1] = 1;
+    res.num[Nmax - 1] = 1;
+    while (n)
     {
-        result.len = 1;
-        result.num[Nmax - 1] = 0;
-        result.sign = '+';
-    }
-    else
-    {
-        int dif = 0;
-        for (int i = 0; i < a.len; i++)
-        {
-            dif = dif * 10 + a.num[Nmax - a.len + i];
-            result.num[Nmax - a.len + i] = dif / b;
-            dif = dif % b;
-        }
-        result.len = a.len;
-        while (result.num[Nmax - result.len] == 0)result.len--;
+        fib0 = res;
+        add_abs(res, fib1, res);
+        fib1 = fib0;
+        n--;
     }
 }
 
 
-
-Tlong cell1, cell2;
+Tlong res, fib0,fib1;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int gen;
-    cin >> gen;
-    input_long(cell1);
-    input_long(cell2);
-    int comp_res = compare(cell1,cell2);
-    while (comp_res)
-    {
-        if (comp_res == -1)swap(cell1, cell2);
-        divide_halflong_abs(cell1, 2, cell1);
-        comp_res = compare(cell1, cell2);
-    }
-    out_long(cell1);
+    int n;
+    cin >> n;
+    fibonachi(n,fib0, fib1, res);
+    out_long(res);
 }
