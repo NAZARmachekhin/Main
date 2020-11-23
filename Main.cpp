@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 10000;
+const int Nmax = 1000001;
 
 struct Tlong
 {
@@ -38,46 +38,34 @@ void out_long(Tlong& n)
 
 }
 
-void add_abs(Tlong a, Tlong b, Tlong& res)
+void plusplus(Tlong& n)
 {
-    res.len = max(a.len, b.len) + 1;
-    for (int i = 0; i < res.len; i++)
+    int cnt = Nmax - 1;
+    for (; n.num[cnt]==9; --cnt)
     {
-        res.num[Nmax - i - 1] = (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) % 10;
-        a.num[Nmax - i - 2] += (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
+        n.num[cnt] = 0;
     }
-    if (res.num[Nmax - res.len] == 0)res.len--;
+    ++n.num[cnt];
+    if (n.num[Nmax - n.len - 1])++n.len;
 }
 
-void zero(Tlong& n)
-{
-    for (int i = Nmax - n.len; i < Nmax; i++)n.num[i] = 0;
-    n.len = 1;
-    n.sign = '+';
-}
 
-Tlong fib1, fib2, fib3;
+
+
+Tlong num;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    zero(fib1);
-    zero(fib2);
-    zero(fib3);
-    fib2.num[Nmax - 1] = 1;
-    int cnt, curr;
+    int cnt;
     cin >> cnt;
     for (int i = 0; i < cnt; i++)
     {
-        cin >> curr;
-        fib1 = fib2;
-        fib2 = fib3;
-        if (curr) add_abs(fib1, fib2, fib3);
-        else
-        {
-            zero(fib3);
-        }
+        input_long(num);
+        num.num[Nmax-num.len - 1] = 0;
+        plusplus(num);
+        out_long(num);
+        cout << "\n";
     }
-    out_long(fib3);
 }
