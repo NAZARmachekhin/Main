@@ -6,10 +6,9 @@ const int Nmax = 10000;
 struct Tlong
 {
     int len = 0;
-    char sign='+';
+    char sign;
     int num[Nmax] = { 0 };
 };
-
 
 void input_long(Tlong& n)
 {
@@ -39,132 +38,46 @@ void out_long(Tlong& n)
 
 }
 
-void multiply_halflong_abs(Tlong& a, int b)
+void add_abs(Tlong a, Tlong b, Tlong& res)
 {
-    int next = 0;
-    int multiply = 0;
-    for (int i = 1; i <= a.len; i++)
+    res.len = max(a.len, b.len) + 1;
+    for (int i = 0; i < res.len; i++)
     {
-        multiply = (a.num[Nmax - i] * b + next);
-        a.num[Nmax - i] = multiply % 10;
-        next = multiply / 10;
+        res.num[Nmax - i - 1] = (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) % 10;
+        a.num[Nmax - i - 2] += (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
     }
-    while(next)
-    {
-        a.len++;
-        multiply = (a.num[Nmax - a.len] * b + next);
-        a.num[Nmax - a.len] = multiply % 10;
-        next = multiply / 10;
-    }
+    if (res.num[Nmax - res.len] == 0)res.len--;
 }
 
-int compare(Tlong a, Tlong b)
+void zero(Tlong& n)
 {
-    if (a.sign != b.sign)
-    {
-        if (a.sign == '+') return 1;
-        return -1;
-    }
-    int sign = 1 - 2 * int(a.sign == '-');
-    if (a.len != b.len)
-    {
-        if (a.len > b.len) return 1 * sign;
-        return -1 * sign;
-    }
-    for (int i = 0; i < a.len; i++)
-    {
-        if (a.num[Nmax - a.len + i] > b.num[Nmax - b.len + i]) return 1 * sign;
-        if (a.num[Nmax - a.len + i] < b.num[Nmax - b.len + i])  return -1 * sign;
-    }
-    return 0;
+    for (int i = Nmax - n.len; i < Nmax; i++)n.num[i] = 0;
+    n.len = 1;
+    n.sign = '+';
 }
 
-void plusplus(Tlong& n)
-{
-    int cnt = Nmax;
-    cnt--;
-    while (n.num[cnt] == 9)
-    {
-        n.num[cnt] = 0;
-        cnt--;
-    }
-    n.num[cnt]++;
-    if (n.num[Nmax - n.len - 1])n.len++;
-}
-
-
-void divide_halflong_abs(Tlong& a, int b, Tlong& result)
-{
-    if (b == 0)
-    {
-        result.len = 1;
-        result.num[Nmax - 1] = 0;
-        result.sign = '+';
-    }
-    else
-    {
-        int dif = 0;
-        for (int i = 0; i < a.len; i++)
-        {
-            dif = dif * 10 + a.num[Nmax - a.len + i];
-            result.num[Nmax - a.len + i] = dif / b;
-            dif = dif % b;
-        }
-        result.len = a.len;
-        while (result.num[Nmax - result.len] == 0)result.len--;
-    }
-}
-
-void mod_halflong_abs(Tlong& a, int b, int& res)
-{
-    if (b == 0) res = 0;
-    else
-    {
-        int dif = 0;
-        for (int i = 0; i < a.len; i++)
-        {
-            dif = dif * 10 + a.num[Nmax - a.len + i];
-            dif = dif % b;
-        }
-        res = dif;
-    }
-}
-
-
-void power(int n, int p, Tlong& res)
-{
-    fill(res.num + (Nmax - res.len), res.num + Nmax, 0);
-    res.len = 1;
-    res.num[Nmax - 1] = 1;
-    for (int i = 0; i < p; i++)
-    {
-        multiply_halflong_abs(res, n);
-    }
-}
-
-Tlong product, Max;
-
+Tlong fib1, fib2, fib3;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int total, divider=1;
-    cin >> total;
-    plusplus(product);
-    plusplus(Max);
-    while(compare(product, Max)+1 && divider<total)
+    zero(fib1);
+    zero(fib2);
+    zero(fib3);
+    fib2.num[Nmax - 1] = 1;
+    int cnt, curr;
+    cin >> cnt;
+    for (int i = 0; i < cnt; i++)
     {
-        power(divider, (total / divider)-1, product);
-        if (total % divider+divider>=(total%divider)*divider)multiply_halflong_abs(product, total % divider+divider);
+        cin >> curr;
+        fib1 = fib2;
+        fib2 = fib3;
+        if (curr) add_abs(fib1, fib2, fib3);
         else
         {
-            multiply_halflong_abs(product, divider);
-            if (total % divider)multiply_halflong_abs(product, total % divider);
+            zero(fib3);
         }
-        divider++;
-        if (compare(product, Max) == 1)Max = product;
     }
-    out_long(Max);
-    cout << "\n";
+    out_long(fib3);
 }
