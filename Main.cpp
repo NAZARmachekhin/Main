@@ -1,12 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 300;
+const int Nmax = 1001;
 
 struct Tlong
 {
     int len = 0;
-    char sign='+';
+    char sign = '+';
     int num[Nmax] = { 0 };
 };
 
@@ -30,7 +30,10 @@ void input_long(Tlong& n)
     }
 }
 
-
+bool comp_zero(Tlong a)
+{
+    return !(a.len == 1 && a.num[Nmax - 1] == 0);
+}
 
 void out_long(Tlong& n)
 {
@@ -44,110 +47,120 @@ void out_long(Tlong& n)
     }
 }
 
-Tlong divide_halflong_abs(Tlong& a, int b)
+
+int compare(Tlong a, Tlong b)
 {
-    Tlong result;
-    if (b == 0)
+    if (a.len != b.len)
     {
-        result.len = 1;
-        result.num[Nmax - 1] = 0;
-        result.sign = '+';
+        if (a.len > b.len) return 1;
+        return -1;
     }
-    else
+    for (int i = 0; i < a.len; i++)
     {
-        int dif = 0;
-        for (int i = 0; i < a.len; i++)
-        {
-            dif = dif * 10 + a.num[Nmax - a.len + i];
-            result.num[Nmax - a.len + i] = dif / b;
-            dif = dif % b;
-        }
-        result.len = a.len;
-        while (result.num[Nmax - result.len] == 0 && result.len)result.len--;
+        if (a.num[Nmax - a.len + i] > b.num[Nmax - b.len + i]) return 1;
+        if (a.num[Nmax - a.len + i] < b.num[Nmax - b.len + i])  return -1;
     }
-    return result;
+    return 0;
 }
 
-int mod_halflong_abs(Tlong& a, int b)
+Tlong substract_abs(Tlong dec, Tlong sub)
 {
-    int res;
-    if (b == 0) res = 0;
-    else
+    Tlong res;
+    res.len = dec.len;
+    for (int i = 1; i <= dec.len; i++)
     {
-        int dif = 0;
-        for (int i = 0; i < a.len; i++)
+        if (dec.num[Nmax - i] < sub.num[Nmax - i])
         {
-            dif = dif * 10 + a.num[Nmax - a.len + i];
-            dif = dif % b;
+            dec.num[Nmax - i - 1]--;
+            dec.num[Nmax - i] += 10;
         }
-        res = dif;
+        res.num[Nmax - i] = dec.num[Nmax - i] - sub.num[Nmax - i];
     }
+    while (res.num[Nmax - res.len] == 0 && res.len > 1) --res.len;
+    return res;
+
+}
+
+void left(Tlong& a)
+{
+    for (int i = a.len; i > 0; --i) a.num[Nmax - i - 1] = a.num[Nmax - i];
+    a.num[Nmax - 1] = 0;
+    ++a.len;
+}
+
+void tenmult(Tlong& a)
+{
+    if (comp_zero(a))++a.len;
+    for (int i = a.len; i > 0; --i) a.num[Nmax - i - 1] = a.num[Nmax - i];
+    a.num[Nmax - 1] = 0;
+}
+
+Tlong divide_abs(Tlong a, Tlong b)
+{
+    Tlong res, temp;
+    res.len = a.len;
+    int cnt = a.len;
+    while (cnt)
+    {
+        if (compare(temp, b) == -1)
+        {
+            tenmult(temp);
+            temp.num[Nmax - 1] = a.num[Nmax - cnt];
+            --cnt;
+        }
+        while (compare(temp, b) != -1)
+        {
+            temp = substract_abs(temp, b);
+            ++res.num[Nmax - cnt - 1];
+        }
+    }
+    while (res.num[Nmax - res.len] == 0 && res.len > 1)--res.len;
     return res;
 }
 
-bool is_prime(int n)
+Tlong mod_abs(Tlong a, Tlong b)
 {
-    for (int i = 2; i <= sqrt(n); i++)
+    Tlong temp;
+    int cnt = a.len;
+    while (cnt)
     {
-        if (!n % i)return false;
-    }
-    return true;
-}
-
-int next_prime(int start)
-{
-    start++;
-    while (!is_prime(start)) start++;
-    return start;
-}
-
-void split(Tlong& a, int primes[])
-{
-    int div = 2;
-    while (!(a.len==1 && a.num[Nmax-1]==1))
-    {
-        while (!mod_halflong_abs(a, div))
+        if (compare(temp, b) == -1)
         {
-            a=divide_halflong_abs(a, div);
-            primes[div]++;
+            tenmult(temp);
+            temp.num[Nmax - 1] = a.num[Nmax - cnt];
+            --cnt;
         }
-        div=next_prime(div);
+        while (compare(temp, b) != -1)
+        {
+            temp = substract_abs(temp, b);
+        }
+
     }
+    return temp;
 }
 
-void out_primes(int p[])
-{
-    bool first = true;
-    for (int i = 0; i < 500000; i++)
-    {
-        if (p[i])
-        {
-            for (int j = i; j>0; j /= 10)cout << " ";
-            if (p[i] > 1)cout << p[i];
-            cout << " ";
-        }
-    }
-    cout << "\n";
-    for (int i = 0; i < 500000; i++)
-    {
-        if (p[i])
-        {
-            if (first)first = false;
-            else cout << "*";
-            cout << i;
-            if (p[i] > 1) for (int j = p[i]; j > 0; j /= 10) cout << " ";
-        }
-    }
-    cout << "\n";
-}
 
-Tlong a,b,res;
+
+
+Tlong num, base, mod;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    input_long(a);
-    input_long(b);
-    out_long(res);
+    input_long(num);
+    input_long(base);
+    string res = "";
+    while (comp_zero(num))
+    {
+        mod = mod_abs(num, base);
+        num = divide_abs(num, base);
+        if (mod.len > 1)res = ']' + res;
+        for (int i = 1; i <= mod.len; ++i)
+        {
+            res = to_string(mod.num[Nmax - i]) + res;
+        }
+        if (mod.len > 1)res = '[' + res;
+    }
+    cout << res << "\n";
 }
