@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const int Nmax = 1001;
+const int Nmax = 100001;
 
 struct Tlong
 {
@@ -10,7 +10,19 @@ struct Tlong
     int num[Nmax] = { 0 };
 };
 
-
+Tlong add_abs(Tlong a, Tlong b)
+{
+    Tlong res;
+    res.len = max(a.len, b.len) + 1;
+    int next = 0;
+    for (int i = 0; i < res.len; i++)
+    {
+        res.num[Nmax - i - 1] = (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]+next) % 10;
+        next= (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
+    }
+    if (res.num[Nmax - res.len] == 0)res.len--;
+    return res;
+}
 
 
 void input_long(Tlong& n)
@@ -47,6 +59,38 @@ void out_long(Tlong& n)
     }
 }
 
+void plusplus(Tlong& n)
+{
+    int cnt = Nmax - 1;
+    for (; n.num[cnt] == 9; --cnt)
+    {
+        n.num[cnt] = 0;
+    }
+    ++n.num[cnt];
+    if (n.num[Nmax - n.len - 1])++n.len;
+}
+
+/*
+34586767
+1234
+*/
+
+
+Tlong multiply_abs(Tlong a, Tlong b)
+{
+    Tlong res;
+    res.len = a.len + b.len+11;
+    for (int i = 1; i <=a.len; ++i)
+        for (int j = 1; j <=b.len; ++j)
+            res.num[Nmax-i-j+1] += a.num[Nmax-i] * b.num[Nmax-j];
+    for (int i = 1; i <res.len; ++i)
+    {
+        res.num[Nmax-i-1] += res.num[Nmax-i]/10;
+        res.num[Nmax-i] %= 10;
+    }
+    while (res.num[Nmax - res.len] == 0 && res.len > 1)--res.len;
+    return res;
+}
 
 int compare(Tlong a, Tlong b)
 {
@@ -63,104 +107,52 @@ int compare(Tlong a, Tlong b)
     return 0;
 }
 
-Tlong substract_abs(Tlong dec, Tlong sub)
+Tlong divide_halflong_abs(Tlong& a, int b)
+{
+    Tlong result;
+    if (b == 0)
+    {
+        result.len = 1;
+        result.num[Nmax - 1] = 0;
+        result.sign = '+';
+    }
+    else
+    {
+        int dif = 0;
+        for (int i = 0; i < a.len; i++)
+        {
+            dif = dif * 10 + a.num[Nmax - a.len + i];
+            result.num[Nmax - a.len + i] = dif / b;
+            dif = dif % b;
+        }
+        result.len = a.len;
+        while (result.num[Nmax - result.len] == 0)result.len--;
+    }
+    return result;
+}
+
+Tlong side_count(Tlong side)
 {
     Tlong res;
-    res.len = dec.len;
-    for (int i = 1; i <= dec.len; i++)
-    {
-        if (dec.num[Nmax - i] < sub.num[Nmax - i])
-        {
-            dec.num[Nmax - i - 1]--;
-            dec.num[Nmax - i] += 10;
-        }
-        res.num[Nmax - i] = dec.num[Nmax - i] - sub.num[Nmax - i];
-    }
-    while (res.num[Nmax - res.len] == 0 && res.len > 1) --res.len;
-    return res;
-
-}
-
-void left(Tlong& a)
-{
-    for (int i = a.len; i > 0; --i) a.num[Nmax - i - 1] = a.num[Nmax - i];
-    a.num[Nmax - 1] = 0;
-    ++a.len;
-}
-
-void tenmult(Tlong& a)
-{
-    if (comp_zero(a))++a.len;
-    for (int i = a.len; i > 0; --i) a.num[Nmax - i - 1] = a.num[Nmax - i];
-    a.num[Nmax - 1] = 0;
-}
-
-Tlong divide_abs(Tlong a, Tlong b)
-{
-    Tlong res, temp;
-    res.len = a.len;
-    int cnt = a.len;
-    while (cnt)
-    {
-        if (compare(temp, b) == -1)
-        {
-            tenmult(temp);
-            temp.num[Nmax - 1] = a.num[Nmax - cnt];
-            --cnt;
-        }
-        while (compare(temp, b) != -1)
-        {
-            temp = substract_abs(temp, b);
-            ++res.num[Nmax - cnt - 1];
-        }
-    }
-    while (res.num[Nmax - res.len] == 0 && res.len > 1)--res.len;
+    res = side;
+    plusplus(side);
+    res = multiply_abs(side, res);
+    res = divide_halflong_abs(res, 2);
     return res;
 }
 
-Tlong mod_abs(Tlong a, Tlong b)
-{
-    Tlong temp;
-    int cnt = a.len;
-    while (cnt)
-    {
-        if (compare(temp, b) == -1)
-        {
-            tenmult(temp);
-            temp.num[Nmax - 1] = a.num[Nmax - cnt];
-            --cnt;
-        }
-        while (compare(temp, b) != -1)
-        {
-            temp = substract_abs(temp, b);
-        }
 
-    }
-    return temp;
-}
-
-
-
-
-Tlong num, base, mod;
+Tlong xlen, ylen, res;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    input_long(num);
-    input_long(base);
-    string res = "";
-    while (comp_zero(num))
-    {
-        mod = mod_abs(num, base);
-        num = divide_abs(num, base);
-        if (mod.len > 1)res = ']' + res;
-        for (int i = 1; i <= mod.len; ++i)
-        {
-            res = to_string(mod.num[Nmax - i]) + res;
-        }
-        if (mod.len > 1)res = '[' + res;
-    }
-    cout << res << "\n";
+    input_long(xlen);
+    input_long(ylen);
+    res = side_count(xlen);
+    res = multiply_abs(res, side_count(ylen));
+    //res = multiply_abs(xlen, ylen);
+    out_long(res);
+    cout << "\n";
 }
