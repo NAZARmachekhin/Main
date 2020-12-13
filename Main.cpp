@@ -186,29 +186,6 @@ Tlong add_abs(Tlong a, Tlong b)
     return res;
 }
 
-Tlong gcd(Tlong a, Tlong b)
-{
-    while (comp_zero(a) && comp_zero(b))
-    {
-        if (compare(a, b) == 1)a = mod_abs(a, b);
-        else b = mod_abs(b, a);
-
-    }
-    if (comp_zero(a))return a;
-    return b;
-}
-
-Tlong lcm(Tlong a, Tlong b)
-{
-    return divide_abs(multiply_abs(a, b), gcd(a, b));
-}
-
-void fill_arr(int m[], int& n)
-{
-    cin >> n;
-    for (int i = 0; i < n; i++) cin >> m[i];
-}
-
 
 void plusplus(Tlong& n)
 {
@@ -230,41 +207,76 @@ void zero(Tlong& n)
     n.len = 1;
 }
 
-Tlong cycle(int m[], int len)
+void left(Tlong& a)
 {
-    Tlong res,cycle_len;
-    zero(res);
-    res.num[Nmax - 1] = 1;
-    int current=0;
-    int previous=0;
-    for (int i = 0; i < len; ++i)
+    for (int i = a.len; i > 0; --i) a.num[Nmax - i - 1] = a.num[Nmax - i];
+    a.num[Nmax - 1] = 0;
+    ++a.len;
+}
+
+
+Tlong natural_fraction(Tlong& mod, Tlong& div)
+{
+    Tlong res;
+    int res_len=0;
+    while (div.num[Nmax - 1] % 2 == 0)
     {
-        if (m[i]!=0)
+        if (mod.num[Nmax - 1] % 2 >0)
         {
-            zero(cycle_len);
-            previous = i+1;
-            current = m[i];
-            do
-            {
-                m[previous-1] = 0;
-                previous = current;
-                current = m[current - 1];
-                plusplus(cycle_len);
-            } while (current != m[i]);
-            res = lcm(res, cycle_len);
+            left(mod);
+            ++res_len;
         }
+        mod = divide_halflong_abs(mod, 2);
+        div = divide_halflong_abs(div, 2);
     }
+    while (div.num[Nmax - 1] % 5 == 0)
+    {
+        if (mod.num[Nmax - 1] % 5>0)
+        {
+            left(mod);
+            ++res_len;
+        }
+        mod = divide_halflong_abs(mod, 5);
+        div = divide_halflong_abs(div, 5);
+    }
+    res = divide_abs(mod,div);
+    res.len = res_len;
+    mod = mod_abs(mod, div);
     return res;
 }
 
-Tlong res,n1,n2;
-int hides[15001]={0};
+Tlong endless_fraction(Tlong mod, Tlong div)
+{
+    Tlong res, etalon = mod;
+    do
+    {
+        left(mod);
+        left(res);
+        res = add_abs(res, divide_abs(mod, div));
+        mod = mod_abs(mod, div);
+    } while (compare(mod, etalon) != 0);
+    return res;
+}
+
+Tlong divider,mod,base;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int len;
-    fill_arr(hides,len);
-    out_long(cycle(hides,len));
+    input_long(base);
+    input_long(divider);
+    out_long(divide_abs(base, divider));
+    mod = mod_abs(base, divider);
+    if (comp_zero(mod))
+    {
+        cout << ".";
+        out_long(natural_fraction(mod,divider));
+        if (comp_zero(mod))
+        {
+            cout << "(";
+            out_long(endless_fraction(mod, divider));
+            cout << ")\n";
+        }
+    }
 }
