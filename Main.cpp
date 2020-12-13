@@ -230,21 +230,24 @@ void zero(Tlong& n)
     n.len = 1;
 }
 
-Tlong cycle(int m[], bool used[], int len)
+Tlong cycle(int m[], int len)
 {
     Tlong res,cycle_len;
     zero(res);
     res.num[Nmax - 1] = 1;
     int current=0;
+    int previous=0;
     for (int i = 0; i < len; ++i)
     {
-        if (!used[i])
+        if (m[i]!=0)
         {
             zero(cycle_len);
+            previous = i+1;
             current = m[i];
             do
             {
-                used[current - 1] = true;
+                m[previous-1] = 0;
+                previous = current;
                 current = m[current - 1];
                 plusplus(cycle_len);
             } while (current != m[i]);
@@ -256,7 +259,6 @@ Tlong cycle(int m[], bool used[], int len)
 
 Tlong res,n1,n2;
 int hides[15001]={0};
-bool used[15001];
 int main()
 {
     ios_base::sync_with_stdio(0);
@@ -264,5 +266,5 @@ int main()
     cout.tie(0);
     int len;
     fill_arr(hides,len);
-    out_long(cycle(hides, used,len));
+    out_long(cycle(hides,len));
 }
