@@ -97,6 +97,21 @@ class Tlong
 
         void plusplus(Tlong& n)
         {
+            if (n.sign == '-') decr_abs(n);
+            else plusplus_abs(n);
+            if (!comp_zero(n))n.sign = '+';
+        }
+
+        void decr(Tlong& n)
+        {
+            if (!comp_zero(n))n.sign = '-';
+            if (n.sign == '+') decr_abs(n);
+            else plusplus_abs(n);
+            if (!comp_zero(n))n.sign = '+';
+        }
+
+        void plusplus_abs(Tlong& n)
+        {
             int cnt = Nmax - 1;
             while (n.num[cnt] == 9)
             {
@@ -106,7 +121,7 @@ class Tlong
             n.num[cnt]++;
             if (n.num[Nmax - n.len - 1])n.len++;
         }
-        void decr(Tlong& n)
+        void decr_abs(Tlong& n)
         {
             int cnt = Nmax - 1;
             while (n.num[cnt] == 0)
@@ -115,7 +130,7 @@ class Tlong
                 cnt--;
             }
             n.num[cnt]--;
-            if (n.num[Nmax - n.len]==0)n.len--;
+            if (n.num[Nmax - n.len]==0 && n.len>1)n.len--;
         }
 
         Tlong multiply(Tlong a, Tlong b)
@@ -544,6 +559,8 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
+    num1.input_long();
+    (num1++).out_long(1);
 }
 
 
