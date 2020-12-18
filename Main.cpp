@@ -199,7 +199,190 @@ class Tlong
             return temp;
         }
 
+        Tlong convert(long long num)
+        {
+            Tlong res;
+            if (num < 0)
+            {
+                res.sign = '-';
+                num = -num;
+            }
+            int i = Nmax - 1;
+            res.len = 0;
+            while (num)
+            {
+                res.len++;
+                res.num[i] = num % 10;
+                num /= 10;
+                i--;
+            }
+            return res;
+        }
+
+        Tlong substract(Tlong a, Tlong b)
+        {
+            if (b.sign == '+')b.sign = '-';
+            else b.sign = '+';
+            return add(a, b);
+        }
+
+        Tlong multiply_halflong(Tlong a, int b)
+        {
+            Tlong res;
+            if (b < 0)res.sign = '-';
+            b = abs(b);
+            if (res.sign == a.sign)res.sign = '+';
+            else res.sign = '-';
+            res.len = a.len;
+            int next = 0;
+            int multiply = 0;
+            for (int i = 1; i <= res.len; i++)
+            {
+                multiply = (a.num[Nmax - i] * b + next);
+                res.num[Nmax - i] = multiply % 10;
+                next = multiply / 10;
+            }
+            while (next)
+            {
+                res.len++;
+                res.num[Nmax - res.len] = next % 10;
+                next /= 10;
+            }
+            while (res.num[Nmax - res.len] == 0 && res.len > 1) --res.len;
+            if (!comp_zero(res))res.sign = '+';
+            return res;
+        }
+
+        Tlong divide_halflong(Tlong a, int b)
+        {
+            Tlong result;
+            if (b==0)
+            {
+                throw "Division by zero condition!";
+            }
+            else
+            {
+                if (b < 0)result.sign = '-';
+                b = abs(b);
+                if (result.sign == a.sign)result.sign = '+';
+                else result.sign = '-';
+                int dif = 0;
+                for (int i = 0; i < a.len; i++)
+                {
+                    dif = dif * 10 + a.num[Nmax - a.len + i];
+                    result.num[Nmax - a.len + i] = dif / b;
+                    dif = dif % b;
+                }
+                result.len = a.len;
+                while (result.num[Nmax - result.len] == 0 && result.len>1)result.len--;
+                if (!comp_zero(result))result.sign = '+';
+            }
+            return result;
+        }
+
+        int mod_halflong(Tlong& a, int b)
+        {
+            if (b == 0)
+            {
+                throw "Division by zero condition!";
+            }
+            b = abs(b);
+            int res;
+            if (b == 0) res = 0;
+            else
+            {
+                int dif = 0;
+                for (int i = 0; i < a.len; i++)
+                {
+                    dif = dif * 10 + a.num[Nmax - a.len + i];
+                    dif = dif % b;
+                }
+                res = dif;
+            }
+            if (a.sign == '-')res = -res;
+            return res;
+        }
+
     public:
+        void operator = (int n)
+        {
+            *this = convert(n);
+        }
+
+        void operator += (int n)
+        {
+            *this = add(*this, convert(n));
+        }
+
+        void operator -= (int n)
+        {
+            *this = substract(*this, convert(n));
+        }
+
+        void operator *= (int n)
+        {
+            *this = multiply_halflong(*this, n);
+        }
+
+        void operator /= (int n)
+        {
+            *this = divide_halflong(*this, n);
+        }
+
+        void operator %= (int n)
+        {
+            *this = convert(mod_halflong(*this, n));
+        }
+
+        int operator % (int n)
+        {
+            return mod_halflong(*this, n);
+        }
+
+        Tlong operator /(int n)
+        {
+            return divide_halflong(*this, n);
+        }
+
+        Tlong operator *(int n)
+        {
+            return multiply_halflong(*this, n);
+        }
+
+        Tlong operator - (int n)
+        {
+            return substract(*this, convert(n));
+        }
+
+        Tlong operator + (int n)
+        {
+            return add(*this, convert(n));
+        }
+
+        void operator +=(Tlong a)
+        {
+            *this = add(*this, a);
+        }
+
+        void operator -=(Tlong a)
+        {
+            *this = substract_abs(*this, a);
+        }
+
+        void operator *=(Tlong a)
+        {
+            *this = multiply(*this, a);
+        }
+
+        void operator /=(Tlong a)
+        {
+            *this = divide(*this, a);
+        }
+
+        void operator %=(Tlong a)
+        {
+            *this = mod_(*this, a);
+        }
 
         Tlong operator %(Tlong a)
         {
@@ -247,9 +430,7 @@ class Tlong
 
         Tlong operator - (Tlong a)
         {
-            if (a.sign == '+')a.sign = '-';
-            else a.sign = '+';
-            return add(*this, a);
+            return substract(*this, a);
         }
 
         void input_long()
@@ -274,7 +455,6 @@ class Tlong
             if (compare(*this,a) == 1)return true;
             return false;
         }
-
 
         bool operator < (Tlong a)
         {
@@ -306,6 +486,42 @@ class Tlong
             return false;
         }
 
+        bool operator > (int a)
+        {
+            if (compare(*this, convert(a)) == 1)return true;
+            return false;
+        }
+
+        bool operator < (int a)
+        {
+            if (compare(*this, convert(a)) == -1)return true;
+            return false;
+        }
+
+        bool operator == (int a)
+        {
+            if (compare(*this, convert(a)) == 0)return true;
+            return false;
+        }
+
+        bool operator >= (int a)
+        {
+            if (compare(*this, convert(a)) >= 0)return true;
+            return false;
+        }
+
+        bool operator <= (int a)
+        {
+            if (compare(*this, convert(a)) <= 0)return true;
+            return false;
+        }
+
+        bool operator != (int a)
+        {
+            if (compare(*this, convert(a)) != 0)return true;
+            return false;
+        }
+
         void out_long(bool next_line = false)
         {
             if (this->sign == '-')
@@ -328,10 +544,6 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    num1.input_long();
-    num2.input_long();
-    (num1 / num2).out_long(1);
-    (num1 % num2).out_long(1);
 }
 
 
@@ -423,25 +635,6 @@ void zero(Tlong& n)
     n.len = 1;
 }
 
-Tlong add(Tlong a, Tlong b)
-{
-    Tlong res;
-    if (a.sign == b.sign)
-    {
-        res = add_abs(a, b);
-        res.sign = a.sign;
-    }
-    else
-    {
-        if (compare(a, b) == 1)res = substract_abs(a, b);
-        else res = substract_abs(b, a);
-        if (compare(a, b) == 1)res.sign = a.sign;
-        else res.sign = b.sign;
-    }
-    if (!comp_zero(res))res.sign = '+';
-    return res;
-}
-
 void out_example(Tlong a, Tlong b, Tlong res, char method)
 {
     if (!comp_zero(b) && method == '/')cout << "Division by zero.";
@@ -465,26 +658,7 @@ Tlong substract(Tlong a, Tlong b)
     return add(a, b);
 }
 
-Tlong multiply_halflong_abs(Tlong a, int b)
-{
-    Tlong res;
-    res.len = a.len;
-    int next = 0;
-    int multiply = 0;
-    for (int i = 1; i <= res.len; i++)
-    {
-        multiply = (a.num[Nmax - i] * b + next);
-        res.num[Nmax - i] = multiply % 10;
-        next = multiply / 10;
-    }
-    while (next)
-    {
-        res.len++;
-        res.num[Nmax - res.len] = next % 10;
-        next /=10;
-    }
-    return res;
-}
+
 
 Tlong fact(int n)
 {
