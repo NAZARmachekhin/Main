@@ -5,7 +5,7 @@ using namespace std;
 
 class Tlong
 {
-    static const int Nmax = 100;
+    static const int Nmax = 10001;
     private:
         
         int len = 1;
@@ -52,9 +52,9 @@ class Tlong
             for (int i = 0; i < res.len; i++)
             {
                 res.num[Nmax - i - 1] = (next+a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) % 10;
-                next = (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
+                next = (next + a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
             }
-            if (res.num[Nmax - res.len] == 0)res.len--;
+            if (res.num[Nmax - res.len] == 0 && res.len>1)res.len--;
             return res;
         }
 
@@ -86,9 +86,9 @@ class Tlong
             }
             else
             {
-                if (compare(a, b) == 1)res = substract_abs(a, b);
+                if (compare_abs(a, b) == 1)res = substract_abs(a, b);
                 else res = substract_abs(b, a);
-                if (compare(a, b) == 1)res.sign = a.sign;
+                if (compare_abs(a, b) == 1)res.sign = a.sign;
                 else res.sign = b.sign;
             }
             if (!comp_zero(res))res.sign = '+';
@@ -121,6 +121,7 @@ class Tlong
             n.num[cnt]++;
             if (n.num[Nmax - n.len - 1])n.len++;
         }
+
         void decr_abs(Tlong& n)
         {
             int cnt = Nmax - 1;
@@ -153,7 +154,7 @@ class Tlong
 
         void tenmult(Tlong& a)
         {
-            if (comp_zero(a))++a.len;
+            if (comp_zero(a))a.len++;
             for (int i = a.len; i > 0; --i) a.num[Nmax - i - 1] = a.num[Nmax - i];
             a.num[Nmax - 1] = 0;
         }
@@ -169,20 +170,21 @@ class Tlong
             }
             while (cnt)
             {
-                if (compare(temp, b) == -1)
+                if (compare_abs(temp, b) == -1)
                 {
                     tenmult(temp);
                     temp.num[Nmax - 1] = a.num[Nmax - cnt];
                     --cnt;
                 }
-                while (compare(temp, b) != -1)
+                while (compare_abs(temp, b) != -1)
                 {
                     temp = substract_abs(temp, b);
                     ++res.num[Nmax - cnt - 1];
                 }
             }
-            if (a.sign == b.sign || !comp_zero(res))res.sign = '+';
+            if (a.sign == b.sign)res.sign = '+';
             else res.sign = '-';
+            if (!comp_zero(res)) res.sign= '+';
             while (res.num[Nmax - res.len] == 0 && res.len > 1)--res.len;
             return res;
         }
@@ -197,24 +199,25 @@ class Tlong
             }
             while (cnt)
             {
-                if (compare(temp, b) == -1)
+                if (compare_abs(temp, b) == -1)
                 {
                     tenmult(temp);
                     temp.num[Nmax - 1] = a.num[Nmax - cnt];
                     --cnt;
                 }
-                while (compare(temp, b) != -1)
+                while (compare_abs(temp, b) != -1)
                 {
                     temp = substract_abs(temp, b);
                 }
 
             }
-            if (a.sign == '+' || !comp_zero(temp))temp.sign = '+';
+            if (a.sign == '+')temp.sign = '+';
             else temp.sign = '-';
+            if (!comp_zero(temp))temp.sign = '+';
             return temp;
         }
 
-        Tlong convert(long long num)
+        Tlong convert(int num)
         {
             Tlong res;
             if (num < 0)
@@ -223,13 +226,12 @@ class Tlong
                 num = -num;
             }
             int i = Nmax - 1;
-            res.len = 0;
             while (num)
             {
-                res.len++;
                 res.num[i] = num % 10;
                 num /= 10;
                 i--;
+                res.len++;
             }
             return res;
         }
@@ -318,7 +320,41 @@ class Tlong
             return res;
         }
 
+
     public:
+
+        void factorial(int n)
+        {
+            Tlong res;
+            res.num[Nmax-1]=1;
+            for (int i = 2; i <= n; i++)
+            {
+                res *= i;
+            }
+            *this = res;
+        }
+
+        Tlong pow(int p)
+        {
+            Tlong res;
+            res.len = 1;
+            res.num[Nmax - 1] = 1;
+            while (p)
+            {
+                if (p & 1)
+                {
+                    res = multiply(res, *this);
+                    --p;
+                }
+                else
+                {
+                    *this = multiply(*this, *this);
+                    p >>= 1;
+                }
+            }
+            return res;
+        }
+
         void operator = (int n)
         {
             *this = convert(n);
@@ -539,6 +575,7 @@ class Tlong
 
         void out_long(bool next_line = false)
         {
+            if (!comp_zero(*this))this->sign = '+';
             if (this->sign == '-')
             {
                 cout << '-';
@@ -549,143 +586,45 @@ class Tlong
             }
             if (next_line)cout << "\n";
         }
-
-
 };
 
-Tlong num1, num2, mod;
+void out_example(Tlong a, Tlong b, Tlong res, char operation)
+{
+    a.out_long();
+    cout << operation;
+    if (b < 0)cout << "(";
+    b.out_long();
+    if (b < 0)cout << ")";
+    cout << "=";
+    res.out_long();
+}
+
+
+Tlong num1, num2, mod, fact;
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
     num1.input_long();
-    (num1++).out_long(1);
-}
-
-
-
-/*
-
-
-
-
-
-void input_long(Tlong& n)
-{
-    string s;
-    cin >> s;
-    if (s[0] == '+' || s[0] == '-')
+    num2.input_long();
+    int f;
+    cin >> f;
+    out_example(num1, num2, num1 + num2, '+');
+    cout << "\n";
+    out_example(num1, num2, num1 - num2, '-');
+    cout << "\n";
+    out_example(num1, num2, num1 * num2, '*');
+    cout << "\n";
+    if (num2 != 0)
     {
-        n.sign = s[0];
-        s.erase(0, 1);
+        out_example(num1, num2, num1 / num2, '/');
+        cout << " (";
+        (num1 % num2).out_long();
+        cout << ")\n";
     }
-    else n.sign = '+';
-    n.len = (s.size());
-    for (int i = 0; i < s.size(); i++)
-    {
-        n.num[Nmax - n.len + i] = s[i] - 48;
-    }
+    else cout << "Division by zero.\n";
+    cout << f << "!=";
+    fact.factorial(f);
+    fact.out_long(1);
 }
-
-
-
-
-
-int compare_abs(Tlong a, Tlong b)
-{
-    if (a.len != b.len)
-    {
-        if (a.len > b.len) return 1;
-        return -1;
-    }
-    for (int i = 0; i < a.len; i++)
-    {
-        if (a.num[Nmax - a.len + i] > b.num[Nmax - b.len + i]) return 1;
-        if (a.num[Nmax - a.len + i] < b.num[Nmax - b.len + i])  return -1;
-    }
-    return 0;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-Tlong add_abs(Tlong a, Tlong b)
-{
-    Tlong res;
-    res.len = max(a.len, b.len) + 1;
-    for (int i = 0; i < res.len; i++)
-    {
-        res.num[Nmax - i - 1] = (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) % 10;
-        a.num[Nmax - i - 2] += (a.num[Nmax - i - 1] + b.num[Nmax - i - 1]) / 10;
-    }
-    if (res.num[Nmax - res.len] == 0)res.len--;
-    return res;
-}
-
-
-void plusplus(Tlong& n)
-{
-    int cnt = Nmax - 1;
-    for (; n.num[cnt] == 9; --cnt)
-    {
-        n.num[cnt] = 0;
-    }
-    ++n.num[cnt];
-    if (n.num[Nmax - n.len - 1])++n.len;
-}
-
-void zero(Tlong& n)
-{
-    for (int i = 1; i <= n.len; ++i)
-    {
-        n.num[Nmax - i] = 0;
-    }
-    n.len = 1;
-}
-
-void out_example(Tlong a, Tlong b, Tlong res, char method)
-{
-    if (!comp_zero(b) && method == '/')cout << "Division by zero.";
-    else
-    {
-        //if (!comp_zero(res))res.sign = '+';
-        out_long(a);
-        cout << method;
-        if (b.sign == '-')cout << "(";
-        out_long(b);
-        if (b.sign == '-')cout << ")";
-        cout << '=';
-        out_long(res);
-    }
-}
-
-Tlong substract(Tlong a, Tlong b)
-{
-    if (b.sign == '-') b.sign = '+';
-    else b.sign = '-';
-    return add(a, b);
-}
-
-
-
-Tlong fact(int n)
-{
-    Tlong res;
-    res.len = 1;
-    res.num[Nmax - 1] = 1;
-    for (int i = 2; i <= n; i++)
-    {
-        res = multiply_halflong_abs(res, i);
-    }
-    return res;
-}
-*/
