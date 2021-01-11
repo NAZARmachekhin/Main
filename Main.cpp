@@ -6,6 +6,11 @@ struct point {
 };
 
 
+double dist(point a, point b)
+{
+    return  sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+}
+
 
 
 int main()
@@ -13,11 +18,18 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    double aside, bside, cside;
-    cin >> aside >> bside >> cside;
-    double phalf = (aside + bside + cside) / 2;
-    cout << fixed << setprecision(3) << (2 / (bside+cside)) * (sqrt(bside*cside*phalf * (phalf-aside))) << "\n";
-    cout << fixed << setprecision(3) << (2 / (aside+cside)) * (sqrt(aside*cside*phalf * (phalf-bside))) << "\n";
-    cout << fixed << setprecision(3) << (2 / (bside+aside)) * (sqrt(bside*aside*phalf * (phalf-cside))) << "\n";
-
+    point curr , prev, first;
+    int count = 0;
+    double p=0;
+    cin >> count;
+    cin >> first.x >> first.y;
+    curr = first;
+    for (int i = 0; i < count-1; i++)
+    {
+        prev = curr;
+        cin >> curr.x >> curr.y;
+        p += dist(prev, curr);
+    }
+    p += dist(curr, first);
+    cout << fixed << setprecision(3) << p << "\n";
 }
