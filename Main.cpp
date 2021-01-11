@@ -6,25 +6,18 @@ struct point {
 };
 
 
-double dist(point a, point b)
-{
-    return  sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-}
 
-double heron(point a, point b, point c)
-{
-    double p=(dist(a,b)+dist(b,c)+dist(a,c))/2;
-    return sqrt(p * (p - dist(a, b)) * (p - dist(b, c)) * (p - dist(a, c)));
-}
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    point apoint, bpoint, cpoint;
-    cin >> apoint.x>>apoint.y;
-    cin >> bpoint.x>>bpoint.y;
-    cin >> cpoint.x>>cpoint.y;
-    cout << fixed << setprecision(3) << heron(apoint, bpoint, cpoint) << "\n";
+    double aside, bside, cside;
+    cin >> aside >> bside >> cside;
+    double phalf = (aside + bside + cside) / 2;
+    cout << fixed << setprecision(3) << (2 / aside) * (sqrt(phalf * (phalf - aside) * (phalf - bside) * (phalf - cside))) << "\n";
+    cout << fixed << setprecision(3) << (2 / bside) * (sqrt(phalf * (phalf - aside) * (phalf - bside) * (phalf - cside))) << "\n";
+    cout << fixed << setprecision(3) << (2 / cside) * (sqrt(phalf * (phalf - aside) * (phalf - bside) * (phalf - cside))) << "\n";
+
 }
