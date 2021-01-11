@@ -16,8 +16,8 @@ int main()
     double aside, bside, cside;
     cin >> aside >> bside >> cside;
     double phalf = (aside + bside + cside) / 2;
-    cout << fixed << setprecision(3) << (2 / aside) * (sqrt(phalf * (phalf - aside) * (phalf - bside) * (phalf - cside))) << "\n";
-    cout << fixed << setprecision(3) << (2 / bside) * (sqrt(phalf * (phalf - aside) * (phalf - bside) * (phalf - cside))) << "\n";
-    cout << fixed << setprecision(3) << (2 / cside) * (sqrt(phalf * (phalf - aside) * (phalf - bside) * (phalf - cside))) << "\n";
+    cout << fixed << setprecision(3) << (2 / (bside+cside)) * (sqrt(bside*cside*phalf * (phalf-aside))) << "\n";
+    cout << fixed << setprecision(3) << (2 / (aside+cside)) * (sqrt(aside*cside*phalf * (phalf-bside))) << "\n";
+    cout << fixed << setprecision(3) << (2 / (bside+aside)) * (sqrt(bside*aside*phalf * (phalf-cside))) << "\n";
 
 }
