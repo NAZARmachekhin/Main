@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -7,48 +6,43 @@ struct point {
 };
 
 
-double dist(point a, point b)
+istream& operator>>(istream& in, point& a)
 {
-    return  sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
+    in >> a.x >> a.y;
+    return in;
 }
 
-double heron(point a, point b, point c)
+ostream& operator<< (ostream& out, point& a)
 {
-    double p = (dist(a, b) + dist(b, c) + dist(a, c)) / 2;
-    return sqrt(p * (p - dist(a, b)) * (p - dist(b, c)) * (p - dist(a, c)));
+    out << a.x << ' ' << a.y << ' ';
+    return out;
 }
 
-void fill_arr(point m[], int& len)
+
+int line_contain(point a, point b, point n)
 {
-    for (int i = 0; i < len; i++)
-    {
-        cin >> m[i].x >> m[i].y;
-    }
+    if ((n.x - a.x) * (b.y - a.y) == (n.y - a.y) * (b.x - a.x))return 0;
+    if ((n.x - a.x) * (b.y - a.y) > (n.y - a.y) * (b.x - a.x)) return 1;
+    if ((n.x - a.x) * (b.y - a.y) < (n.y - a.y) * (b.x - a.x)) return -1;
 }
 
-bool inside_triangle(point tops[], point n)
-{
-    double s = heron(tops[0],tops[1],tops[2]);
-    s -= heron(tops[0], tops[1], n);
-    s -= heron(tops[1], tops[2], n);
-    s -= heron(tops[2], tops[0], n);
-    return abs(s) <=0.00001;
-}
+
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int len = 3;
-    point tops[3],curr;
-    fill_arr(tops, len);
-    int count, answ=0;
-    cin >> count;
-    for (int i = 0; i < count; i++)
+    point base1, base2, point1, point2;
+    cin >> base1 >> base2 >> point1 >> point2;
+    int res=0;
+    if (line_contain(base1, base2, point1) == 0)res += 1;
+    if (line_contain(base1, base2, point2) == 0)res += 2;
+    if (res > 0)cout << res << "\n";
+    else
     {
-        cin >> curr.x >> curr.y;
-        if (inside_triangle(tops, curr))answ++;
+        res += line_contain(base1, base2, point1) + line_contain(base1, base2, point2);
+        if (res == 0)cout << "-2\n";
+        else cout << "-1\n";
     }
-    cout << answ << "\n";
 }
