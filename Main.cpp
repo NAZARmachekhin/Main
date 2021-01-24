@@ -18,14 +18,10 @@ ostream& operator<< (ostream& out, point& a)
     return out;
 }
 
-
-int line_contain(point a, point b, point n)
+double dist(point a, point b)
 {
-    if ((n.x - a.x) * (b.y - a.y) == (n.y - a.y) * (b.x - a.x))return 0;
-    if ((n.x - a.x) * (b.y - a.y) > (n.y - a.y) * (b.x - a.x)) return 1;
-    if ((n.x - a.x) * (b.y - a.y) < (n.y - a.y) * (b.x - a.x)) return -1;
+    return  sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
 }
-
 
 
 int main()
@@ -33,16 +29,11 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    point base1, base2, point1, point2;
-    cin >> base1 >> base2 >> point1 >> point2;
-    int res=0;
-    if (line_contain(base1, base2, point1) == 0)res += 1;
-    if (line_contain(base1, base2, point2) == 0)res += 2;
-    if (res > 0)cout << res << "\n";
-    else
-    {
-        res += line_contain(base1, base2, point1) + line_contain(base1, base2, point2);
-        if (res == 0)cout << "-2\n";
-        else cout << "-1\n";
-    }
+    point sw,ne,human;
+    cin >> sw >> ne>>human;
+    if (human.y > ne.y) cout << "N";
+    else if (human.y<sw.y)cout << "S";
+    if (human.x > ne.x)cout << "E";
+    else if (human.x < sw.x)cout << "W";
+    cout << "\n";
 }
