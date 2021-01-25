@@ -1,4 +1,3 @@
-
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -18,12 +17,6 @@ ostream& operator<< (ostream& out, point& a)
     return out;
 }
 
-double dist(point a, point b)
-{
-    return  sqrt((a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y));
-}
-
-
 void fill_arr(point m[], int& len)
 {
     cin >> len;
@@ -33,19 +26,23 @@ void fill_arr(point m[], int& len)
     }
 }
 
-long double haus(point tops[], int len)
+bool line_side(point a, point b, point n)
 {
-    long double res = 0;
-    for (int i = 0; i < len - 1; i++)
-    {
-        res += (double)(tops[i].x * tops[i + 1].y - tops[i + 1].x * tops[i].y)/2;
-    }
-    res += (double)(tops[len-1].x * tops[0].y - tops[0].x * tops[len-1].y)/2;
-    res = abs(res);
-    return res;
+    return (n.x - a.x) * (b.y - a.y) > (n.y - a.y) * (b.x - a.x);
 }
 
-point tops[100001];
+bool opuklyy(point m[], int len)
+{
+    bool side = line_side(m[len-1], m[0], m[1]);
+    for (int i = 0; i < len - 2; i++)
+    {
+        if (side != line_side(m[i], m[i + 1], m[i + 2]))return false;
+    }
+    return true;
+}
+
+point m[100001];
+
 
 int main()
 {
@@ -53,6 +50,7 @@ int main()
     cin.tie(0);
     cout.tie(0);
     int len;
-    fill_arr(tops, len);
-    cout << fixed << setprecision(7) << haus(tops, len) << "\n";
+    fill_arr(m, len);
+    if (opuklyy(m, len))cout << "YES\n";
+    else cout << "NO\n";
 }
