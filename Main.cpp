@@ -1,56 +1,48 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct point {
-    int x = 0, y = 0;
-};
-
-istream& operator>>(istream& in, point& a)
+void get_string(string& s)
 {
-    in >> a.x >> a.y;
-    return in;
+    string line;
+    getline(cin, s);
+    while (getline(cin, line))
+        s += "\n" + line;
 }
 
-ostream& operator<< (ostream& out, point& a)
+bool count_symb(string s, long long m[])
 {
-    out << a.x << ' ' << a.y << ' ';
-    return out;
-}
-
-void fill_arr(point m[], int& len)
-{
-    cin >> len;
-    for (int i = 0; i < len; i++)
+    bool present = false;
+    for (long long i = 0; i < s.length(); ++i)
     {
-        cin >> m[i];
+        if (isalpha(s[i]))
+        {
+            present = true;
+            m[tolower(s[i]) - 'a']++;
+        }
+    }
+    return present;
+}
+
+void out_arr(long long m[])
+{
+    for (int i = 0; i < 26; i++)
+    {
+        cout << (char)toupper(i + 'a') << " " << m[i]<<"\n";
     }
 }
 
-bool line_side(point a, point b, point n)
-{
-    return (n.x - a.x) * (b.y - a.y) > (n.y - a.y) * (b.x - a.x);
-}
-
-bool opuklyy(point m[], int len)
-{
-    bool side = line_side(m[len-1], m[0], m[1]);
-    for (int i = 0; i < len - 2; i++)
-    {
-        if (side != line_side(m[i], m[i + 1], m[i + 2]))return false;
-    }
-    return true;
-}
-
-point m[100001];
-
+long long symbol[26]={0};
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int len;
-    fill_arr(m, len);
-    if (opuklyy(m, len))cout << "YES\n";
-    else cout << "NO\n";
+    freopen("analiz.in", "r", stdin);
+    freopen("analiz.out", "w", stdout);
+    string text;
+    get_string(text);
+    if (count_symb(text, symbol))
+        out_arr(symbol);
+    else cout << "-1\n";
 }
