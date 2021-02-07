@@ -1,25 +1,33 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int search(string m[], int len, string a)
+int to_int(string s, int beg, int cnt)
 {
-    for (int i = 0; i < len; i++)
-        if (m[i] == a)return i;
-    return -1;
+    int res = 0;
+    for (int i = beg; i < beg + cnt; i++)
+    {
+        res *= 10;
+        res += (s[i] - '0');
+    }
+    return res;
 }
 
-string decode(string pass, string alpha[])
+int time_min(string s)
 {
-    string answ;
-    char symb;
-    for (int i = 0; i < pass.size(); i += 10)
-    {
-        symb = search(alpha, 10, pass.substr(i, 10)) + '0';
-        if (!isalnum(symb))return "-1";
-        else answ += symb;
-    }
-    return answ;
+    return to_int(s, 0, 2) * 60 + to_int(s,3, 2);
 }
+
+string time_str(int t)
+{
+    t %= 1440;
+    string time="";
+    if (t / 60<10)time += '0';
+    time+= to_string(int(t / 60))+':';
+    if (t % 60 < 10)time += '0';
+    time += to_string(t % 60);
+    return time;
+}
+
 
 
 int main()
@@ -27,9 +35,17 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    string pass;
-    string alpha[10];
-    cin >> pass;
-    for (int i = 0; i < 10; i++)cin >> alpha[i];
-    cout << decode(pass, alpha) << "\n";
+    //freopen("hedgehog.dat", "r", stdin);
+    //freopen("hedgehog.res", "w", stdout);
+    string start;
+    cin >> start;
+    int len,next=0;
+    cin >> len;
+    int clock = time_min(start);
+    for (int i = 0; i < len; i++)
+    {
+        clock += next;
+        cout << time_str(clock)<<"\n";
+        cin >> next;
+    }
 }
