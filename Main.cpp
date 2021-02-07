@@ -1,37 +1,35 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int formate(char s)
+int search(string m[], int len, string a)
 {
-    if (s == 'I') return 1;
-    if (s == 'V') return 5;
-    if (s == 'X') return 10;
-    if (s == 'L') return 50;
-    if (s == 'D') return 500;
-    if (s == 'C') return 100;
-    if (s == 'M') return 1000;
+    for (int i = 0; i < len; i++)
+        if (m[i] == a)return i;
+    return -1;
 }
 
-long long translate_rome(string s)
+string decode(string pass, string alpha[])
 {
-    long long res = 0;
-    int curr = 0;
-    for (int i = 0; i < s.size()-1; i++)
+    string answ;
+    char symb;
+    for (int i = 0; i < pass.size(); i += 10)
     {
-        curr = formate(s[i]);
-        if (curr < formate(s[i + 1]))curr *= -1;
-        res += curr;
+        symb = search(alpha, 10, pass.substr(i, 10)) + '0';
+        if (!isalnum(symb))return "-1";
+        else answ += symb;
     }
-    res += formate(s[s.size() - 1]);
-    return res;
+    return answ;
 }
+
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    string date;
-    cin >> date;
-    cout << translate_rome(date) << "\n";
+    string pass;
+    string alpha[10];
+    cin >> pass;
+    for (int i = 0; i < 10; i++)cin >> alpha[i];
+    cout << decode(pass, alpha) << "\n";
 }
