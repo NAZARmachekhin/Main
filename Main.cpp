@@ -1,56 +1,38 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-long long to_long(string s)
+string formating(string s)
 {
-    long long res = 0;
     for (int i = 0; i < s.size(); i++)
     {
-        res *= 10;
-        res += (s[i] - 48);
+        if (s[i] == '%')s[i] = '5';
+        if (s[i] == '&')s[i] = '6';
+        if (s[i] == '~')s[i] = '1';
+        if (s[i] == '@')s[i] = '2';
+        if (s[i] == '#')s[i] = '3';
+        if (s[i] == '$')s[i] = '4';
     }
-    return res;
+    return s;
 }
 
-bool is_prime(long long n)
-{
-    if (n < 2)return false;
-    for (long long i = 2; i <= sqrt(n); i++)
-    {
-        if (n % i == 0)return false;
-    }
-    return true;
-}
-
-bool num_check(string s)
-{
-    for (long long i = 0; i < s.size(); i++)
-    {
-        if (s[i] > '9' || s[i] < '0')return false;
-    }
-    return true;
-}
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    freopen("prime.in", "r", stdin);
-    freopen("prime.out", "w", stdout);
-    string word;
-    int status = -1;
-    while (cin >> word)
+    string order;
+    while (cin>>order)
     {
-        if (num_check(word))
+        string stack = "";
+        order = formating(order);
+        stack += order[0];
+        for (int i = 1; i < order.size(); i++)
         {
-            if (is_prime(to_long(word)))
-            {
-                status = 1;
-                cout << word << "\n";
-            }
+            if (stack[stack.size() - 1] + 1 == order[i])stack.erase(stack.size() - 1, 1);
+            else stack += order[i];
         }
+        if (stack=="")cout << "OK\n";
+        else cout << "WRONG\n";
     }
-    if (status == -1 && word.size() != 0)cout << "-1\n";
-    else if (word.size() == 0)cout << "NULL\n";
 }
