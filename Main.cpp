@@ -1,18 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-string formating(string s)
+
+
+bool is_polyndrom_num(string s)
 {
-    for (int i = 0; i < s.size(); i++)
+    if (s.size() % 2 == 1 && isalpha(s[s.size() / 2]))return false;
+    for (int i = 0; i < s.size() / 2; i++)
     {
-        if (s[i] == '%')s[i] = '5';
-        if (s[i] == '&')s[i] = '6';
-        if (s[i] == '~')s[i] = '1';
-        if (s[i] == '@')s[i] = '2';
-        if (s[i] == '#')s[i] = '3';
-        if (s[i] == '$')s[i] = '4';
+        if (s[i] != s[s.size() - 1 - i])return false;
+        if (isalpha(s[i]) || isalpha(s[s.size() - 1 - i]))return false;
     }
-    return s;
+    return true;
 }
 
 
@@ -21,18 +20,15 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    string order;
-    while (cin>>order)
+    string word;
+    bool excist = false;
+    while (cin >> word)
     {
-        string stack = "";
-        order = formating(order);
-        stack += order[0];
-        for (int i = 1; i < order.size(); i++)
+        if (is_polyndrom_num(word))
         {
-            if (stack[stack.size() - 1] + 1 == order[i])stack.erase(stack.size() - 1, 1);
-            else stack += order[i];
+            excist = true;
+            cout << word << "\n";
         }
-        if (stack=="")cout << "OK\n";
-        else cout << "WRONG\n";
     }
+    if (!excist)cout << "The notepad is clean.\n";
 }
