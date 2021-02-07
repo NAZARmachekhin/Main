@@ -1,51 +1,56 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int to_int(string s, int beg, int cnt)
+long long to_long(string s)
 {
-    int res = 0;
-    for (int i = beg; i < beg + cnt; i++)
+    long long res = 0;
+    for (int i = 0; i < s.size(); i++)
     {
         res *= 10;
-        res += (s[i] - '0');
+        res += (s[i] - 48);
     }
     return res;
 }
 
-int time_min(string s)
+bool is_prime(long long n)
 {
-    return to_int(s, 0, 2) * 60 + to_int(s,3, 2);
+    if (n < 2)return false;
+    for (long long i = 2; i <= sqrt(n); i++)
+    {
+        if (n % i == 0)return false;
+    }
+    return true;
 }
 
-string time_str(int t)
+bool num_check(string s)
 {
-    t %= 1440;
-    string time="";
-    if (t / 60<10)time += '0';
-    time+= to_string(int(t / 60))+':';
-    if (t % 60 < 10)time += '0';
-    time += to_string(t % 60);
-    return time;
+    for (long long i = 0; i < s.size(); i++)
+    {
+        if (s[i] > '9' || s[i] < '0')return false;
+    }
+    return true;
 }
-
-
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    //freopen("hedgehog.dat", "r", stdin);
-    //freopen("hedgehog.res", "w", stdout);
-    string start;
-    cin >> start;
-    int len,next=0;
-    cin >> len;
-    int clock = time_min(start);
-    for (int i = 0; i < len; i++)
+    freopen("prime.in", "r", stdin);
+    freopen("prime.out", "w", stdout);
+    string word;
+    int status = -1;
+    while (cin >> word)
     {
-        clock += next;
-        cout << time_str(clock)<<"\n";
-        cin >> next;
+        if (num_check(word))
+        {
+            if (is_prime(to_long(word)))
+            {
+                status = 1;
+                cout << word << "\n";
+            }
+        }
     }
+    if (status == -1 && word.size() != 0)cout << "-1\n";
+    else if (word.size() == 0)cout << "NULL\n";
 }
