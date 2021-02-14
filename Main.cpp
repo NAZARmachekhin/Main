@@ -1,39 +1,73 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+long long to_long(string s)
+{
+    long long res = 0;
+    for (int i = 0; i < s.size(); i++)
+    {
+        res *= 10;
+        res += (s[i] - 48);
+    }
+    return res;
+}
 
+int find_num(string text, int beg)
+{
+    while (!isdigit(text[beg]) && beg < text.size())beg++;
+    return beg;
+}
 
+int num_len(long long n)
+{
+    int res = 0;
+    while (n != 0)
+    {
+        n /= 10;
+        res++;
+    }
+    return res;
+}
 
-
+bool armstrong(long long n)
+{
+    long long res = 0;
+    long long etalon = n;
+    long long len = num_len(n);
+    for (int i = 0; i < len; ++i)
+    {
+        res += pow(n % 10, len);
+        n /= 10;
+    }
+    return (res == etalon);
+}
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    freopen("expression_1.in", "r", stdin);
-    freopen("expression_1.out", "w", stdout);
-    string expr, a, b;
-    char sign;
-    double res;
-    while (getline(cin, expr))
+    freopen("armstrong.in", "r", stdin);
+    freopen("armstrong.out", "w", stdout);
+    string text,word;
+    while (cin >> word)text += " " + word;
+    int beg = 0;
+    int end = 0;
+    bool excist=false;
+    while (beg < text.size() && end < text.size())
     {
-        if (expr != "")
+        beg = find_num(text, beg);
+        end = text.find_first_of(" .,:;!?\"[]", beg);
+        if (end == -1)end = text.size();
+        else
         {
-            a = expr.substr(0, expr.find_first_of("+-/* ", 2));
-            b = expr.substr(a.size() + 1, expr.size() - a.size());
-            sign = expr[expr.find_first_of("+-/*", 2)];
-            if (stod(b) ==0 && sign == '/')cout << "Error\n";
-            else
+            if (armstrong(to_long(text.substr(beg, end - beg))))
             {
-                if (sign == '+')res = stod(a) + stod(b);
-                if (sign == '-')res = stod(a) - stod(b);
-                if (sign == '*')res = stod(a) * stod(b);
-                if (sign == '/')res = stod(a) / stod(b);
-                if (res == round(res))cout << fixed << setprecision(0) << res << "\n";
-                else cout << fixed << setprecision(4) << res << "\n";
+                excist = true;
+                cout << text.substr(beg, end - beg) << "\n";
             }
         }
-        else cout << "NULL\n";
+        beg = end;
     }
+    if (!excist)cout << "-1\n";
 }
