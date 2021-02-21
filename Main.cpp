@@ -1,63 +1,83 @@
 #include <bits/stdc++.h>
-
 using namespace std;
 
-bool is_in(char a, string s)
+
+
+
+
+
+
+
+bool empty(string s)
 {
     for (int i = 0; i < s.size(); i++)
-        if (a == s[i])return true;
-    return false;
+    {
+        if (isdigit(s[i]))return false;
+    }
+    return true;
 }
 
-int count_dif_alpha(string s)
+string open_brackets(string s)
 {
-    int res = 0;
-    bool map[40] = { 0 };
+    char curr='+';
+    char mod='+';
     for (int i = 0; i < s.size(); i++)
-        if (isalpha(s[i]))map[toupper(s[i]) - 'A'] = 1;
-    for (int i = 0; i < 40; i++)
-        res += map[i];
-    return res;
+    {
+        if (s[i]=='+' || s[i]=='-')
+            curr=s[i];
+        else if (s[i] == '(')
+        {
+            s.erase(i, 1);
+            while (s[i] != ')' && i < s.size())
+            {
+                if (s[i] == '+' || s[i] == '-')
+                    mod = s[i];
+                if (s[i] == '+' || s[i] == '-')
+                {
+                    if (curr == mod)s[i] = '+';
+                    else s[i] = '-';
+                }
+                i++;
+            }
+            s.erase(i, 1);
+        }
+    }
+    for (int i = 0; i < s.size(); i++)
+    {
+        while (s[i] != '-' && s[i] != '+' && i < s.size())i++;
+        if ((s[i] == '+' || s[i] == '-') && (s[i+1] == '+' || s[i+1] == '-') && i + 1 < s.size())
+            s.erase(i, 1);
+    }
+    return s;
 }
 
 int main()
 {
-    freopen("maxsymbol.in", "r", stdin);
-    freopen("maxsymbol.out", "w", stdout);
-    string line,word, res = "";
-    int maxS = 0;
-    bool empty = true;
+    ios_base::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
+    freopen("expression_3.in", "r", stdin);
+    freopen("expression_3.out", "w", stdout);
+    string line;
     while (getline(cin, line))
     {
-        if (line != "")empty=false;
-        int beg = 0;
-        int end = line.find_first_of(" .,;:!?\"[]", beg);
-        while (end != -1&& end < line.size())
+        if (empty(line)) cout << "NULL\n";
+        else
         {
-            word = line.substr(beg, end - beg);
-            while (is_in(line[end], " .,;:!?\"][") && end < line.size())end++;
-            beg = end;
-            end = line.find_first_of(" .,;:!?\"][", beg);
-            if (count_dif_alpha(word) == maxS && maxS > 0)
-                res += word + ' ';
-            if (count_dif_alpha(word) > maxS)
+            int beg = 0;
+            int end = 0;
+            long long res = 0;
+            line = open_brackets(line);
+            //cout << line << "\n";
+            while (beg < line.size())
             {
-                maxS = count_dif_alpha(word);
-                res = word + ' ';
+                if (line[beg] == '+' || line[end] == '-')end++;
+                while (line[end] != '-' && line[end] != '+' && end < line.size())end++;
+                res += stoll(line.substr(beg,end-beg));
+                beg = end;
             }
-            
-        }
-        word = line.substr(beg, line.size() - beg);
-        if (count_dif_alpha(word) == maxS && maxS > 0)
-            res += word + ' ';
-        if (count_dif_alpha(word) > maxS)
-        {
-            maxS = count_dif_alpha(word);
-            res = word + ' ';
+            cout << res << "\n";
         }
     }
-    if (empty)cout << "NULL\n";
-    else if (maxS == 0)cout << "-1\n";
-    else cout << res << "\n";
     return 0;
 }
