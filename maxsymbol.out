@@ -1,89 +1,12 @@
-#include <bits/stdc++.h>
-using namespace std;
-long long Convert(string S)
-{
-    int x = 1;
-    if (S[0] == '-')
-        x = -1;
-    if (S[0] == '-' || S[0] == '+')S.erase(0, 1);
-    return stoll(S.c_str()) * x;
-}
-char FindSign(int sign, int CurSign)
-{
-    if (sign != CurSign)
-        return '-';
-    return '+';
-}
-bool IsPOrM(char a)
-{
-    return (a == '-' || a == '+');
-}
-int WhatIsSign(char a)
-{
-    if (a == '+') return 1;
-    return -1;
-}
-void PrepareString(string& S)
-{
-    int sign = 1, CurSign = 1;
-    for (int i = 0; i < S.size(); i++)
-    {
-        if (IsPOrM(S[i]))
-            sign = WhatIsSign(S[i]);
-        else if (S[i] == '(')
-        {
-            S.erase(i, 1);
-            while (S[i] != ')' && i < S.size())
-            {
-                if (IsPOrM(S[i]))
-                    CurSign = WhatIsSign(S[i]);
-                if (IsPOrM(S[i]))S[i] = FindSign(sign, CurSign);
-                i++;
-            }
-            S.erase(i, 1);
-        }
-    }
-    for (int i = 0; i < S.size(); i++)
-    {
-        while (S[i] != '-' && S[i] != '+' && i < S.size())i++;
-        if (IsPOrM(S[i]) && IsPOrM(S[i + 1]) && i + 1 < S.size())
-            S.erase(i, 1);
-    }
-}
-long long Solution(string S)
-{
-    long long sum = 0;
-    int i = 0;
-    PrepareString(S);
-    while (i < S.size())
-    {
-        string HelpS;
-        if (S[i] == '-' || S[i] == '+') HelpS = S[i++];
-        while (S[i] != '-' && S[i] != '+' && i < S.size())
-            HelpS += S[i++];
-        long long b = Convert(HelpS);
-        sum += b;
-    }
-    return sum;
-}
-bool IsEmpty(string S)
-{
-    for (int i = 0; i < S.size(); i++)
-        if (S[i] >= 48 && S[i] <= 57) return 0;
-    return 1;
-}
-int main()
-{
-    ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
-    freopen("expression_3.in", "r", stdin);
-    freopen("expression_3.out", "w", stdout);
-    string S;
-    while (getline(cin, S))
-    {
-        if (IsEmpty(S)) cout << "NULL\n";
-        else cout << Solution(S) << '\n';
-    }
-    return 0;
-}
+is 2 0
+over 4 2
+and 3 4
+it 2 4
+autumn 5 4
+again 4 5
+ 0 5
+as 2 5
+ever 3 5
+ 0 5
+ 0 5
+autumn 
