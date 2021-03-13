@@ -4,16 +4,8 @@ using namespace std;
 struct TLinkOne
 {
     int data = 0;
-    TLinkOne* next;
+    TLinkOne* next=NULL;
 };
-
-void push(TLinkOne*& head, int data)
-{
-    TLinkOne* n = new TLinkOne;
-    n->data = data;
-    n->next = head;
-    head = n;
-}
 
 int size_(TLinkOne* head)
 {
@@ -26,16 +18,31 @@ int size_(TLinkOne* head)
     return cnt;
 }
 
-bool pop(TLinkOne *& head)
+void push_queue(TLinkOne*& head, int data)
 {
-    if (size_(head)==0)return false;
-    TLinkOne* n=head;
+    TLinkOne* n = new TLinkOne;
+    n->data = data;
+    if (head == NULL)head = n;
+    else
+    {
+        TLinkOne *i = head;
+        while (i->next != NULL)i = i->next;
+        i->next = n;
+    }
+}
+
+
+bool pop(TLinkOne*& head, int& data)
+{
+    if (size_(head) == 0)return false;
+    data = head->data;
+    TLinkOne* n = head;
     head = head->next;
     delete n;
     return true;
 }
 
-bool back_(TLinkOne* head, int &data)
+bool front(TLinkOne* head, int& data)
 {
     if (size_(head) == 0)return false;
     data = head->data;
@@ -50,15 +57,7 @@ void clear_(TLinkOne*& top)
         TLinkOne* temp = top;
         top = top->next;
         delete temp;
-    } 
-}
-
-bool closed(int a, int b)
-{
-    if (a == '(' && b == ')')return true;
-    if (a == '{' && b == '}')return true;
-    if (a == '[' && b == ']')return true;
-    return false;
+    }
 }
 
 int main()
@@ -66,17 +65,39 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    TLinkOne * head = NULL;
-    char data;
-    while (cin >> data)
+    TLinkOne* head = NULL;
+    string s;
+    bool end = false;
+    int data = 0;
+    while (!end)
     {
-        if (size_(head) == 0)push(head, data);
-        else
+        cin >> s;
+        if (s == "exit")
         {
-            if (closed(head->data, data))pop(head);
-            else push(head, data);
+            end = true;
+            cout << "bye\n";
+        }
+        if (s == "push")
+        {
+            cin >> data;
+            push_queue(head, data);
+            cout << "ok" << "\n";
+        }
+        if (s == "pop")
+        {
+            if (!pop(head, data))cout << "error\n";
+            else cout << data << "\n";
+        }
+        if (s == "front")
+        {
+            if (!front(head, data))cout << "error\n";
+            else cout << data << "\n";
+        }
+        if (s == "size")cout << size_(head) << "\n";
+        if (s == "clear")
+        {
+            clear_(head);
+            cout << "ok\n";
         }
     }
-    if (size_(head) == 0)cout << "YES\n";
-    else cout << "NO\n";
 }
