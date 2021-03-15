@@ -1,73 +1,35 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void add(int m[], int& len, int n)
+void fill_arr(int m[], int& n)
 {
-    m[len + 1] = n;
-    len++;
-    int son = len;
-    while (son / 2 >= 1)
-    {
-        int father = son / 2;
-        if (m[son] > m[father])
-        {
-            swap(m[son], m[father]);
-            son = father;
-        }
-        else
-            son = 1;
-    }
+    cin >> n;
+    for (int i = 1; i <= n; i++)cin >> m[i];
 }
 
-void rebuild(int m[], int father, int last)
+bool checker(int m[], int n, int i)
 {
-    int son;
-    while (father <= last / 2)
-    {
-        son = 2 * father;
-        if (2 * father + 1 <= last && m[son] < m[son+1])
-        {
-            son++;
-        }
-        if (m[son] > m[father])
-        {
-            swap(m[son], m[father]);
-            father = son;
-        }
-        else
-        {
-            father = last;
-        }
-    }
+    if (2 * i <= n && m[i] > m[2 * i]) return false;
+    if (2 * i + 1 <= n && m[i] > m[2 * i + 1]) return false;
+    return true;
 }
 
-int del(int m[], int& len)
+
+bool check_heap(int m[], int len)
 {
-    swap(m[1], m[len]);
-    rebuild(m, 1, len - 1);
-    return m[len--];
+    for (int i = 1; i <= len; i++)
+        if (!checker(m, len, i))return false;
+    return true;
 }
 
-int m[1000001];
-
+int m[100001] = { 0 };
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int cnt, len = 0, num, cmd;
-    cin >> cnt;
-    for (int i = 0; i < cnt; i++)
-    {
-        cin >> cmd;
-        if (!cmd)
-        {
-            cin >> num;
-            add(m, len, num);
-        }
-        else
-            cout << del(m, len) << '\n';
-    }
-    cout << '\n';
-    return 0;
+    int len;
+    fill_arr(m, len);
+    if (check_heap(m,len))cout << "YES\n";
+    else cout << "NO\n";
 }
