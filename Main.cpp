@@ -1,35 +1,163 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void fill_arr(int m[], int& n)
+struct TLinkTwo
 {
-    cin >> n;
-    for (int i = 1; i <= n; i++)cin >> m[i];
+    int data = 0;
+    TLinkTwo* next = NULL;
+    TLinkTwo* prev = NULL;
+};
+
+void push(TLinkTwo*& head, int data, char pos)
+{
+    if (head == NULL)
+    {
+        head = new TLinkTwo;
+        head->data = data;
+    }
+    else if (pos == 'f')
+    {
+        TLinkTwo *temp=new TLinkTwo;
+        temp->data = data;
+        head->next = temp;
+        temp->prev = head;
+        head = temp;
+    }
+    else if (pos == 'b')
+    {
+        TLinkTwo* tail, *temp;
+        tail = head;
+        while (tail->prev!=NULL)
+        {
+            tail = tail->prev;
+        }
+        temp = new TLinkTwo;
+        temp->next = tail;
+        tail->prev = temp;
+        temp->data = data;
+    }
 }
 
-bool checker(int m[], int n, int i)
+int size_(TLinkTwo* head)
 {
-    if (2 * i <= n && m[i] > m[2 * i]) return false;
-    if (2 * i + 1 <= n && m[i] > m[2 * i + 1]) return false;
+    int cnt = 0;
+    while (head != NULL)
+    {
+        cnt++;
+        head = head->prev;
+    }
+    return cnt;
+}
+
+void clear_(TLinkTwo*& head)
+{
+    while (head!=NULL)
+    {
+        TLinkTwo* temp = head;
+        head = head->prev;
+        delete temp;
+    }
+}
+
+bool front(TLinkTwo*head, int&data)
+{
+    if (head == NULL)return false;
+    data = head->data;
     return true;
 }
 
-
-bool check_heap(int m[], int len)
+bool back(TLinkTwo* head, int& data)
 {
-    for (int i = 1; i <= len; i++)
-        if (!checker(m, len, i))return false;
+    if (head == NULL)return false;
+    while (head->prev != NULL)head = head->prev;
+    data = head->data;
     return true;
 }
 
-int m[100001] = { 0 };
+bool pop(TLinkTwo*& head, int& data, char pos)
+{
+    if (head == NULL)return false;
+    if (head->prev == NULL)
+    {
+        data = head->data;
+        clear_(head);
+    }
+    else if (pos == 'f')
+    {
+        data = head->data;
+        TLinkTwo *temp = head;
+        head = head->prev;
+        head->next = NULL;
+        delete temp;
+    }
+    else if (pos == 'b')
+    {
+        TLinkTwo * tail=head;
+        while (tail->prev != NULL)
+        {
+            tail = tail->prev;
+        }
+        data = tail->data;
+        tail->next->prev = NULL;
+        delete tail;
+    }
+    return true;
+}
+
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    int len;
-    fill_arr(m, len);
-    if (check_heap(m,len))cout << "YES\n";
-    else cout << "NO\n";
+    TLinkTwo* head = NULL;
+    string s;
+    bool end = false;
+    int data = 0;
+    while (!end)
+    {
+        cin >> s;
+        if (s == "exit")
+        {
+            end = true;
+            cout << "bye\n";
+        }
+        if (s == "push_front")
+        {
+            cin >> data;
+            push(head, data,'f');
+            cout << "ok" << "\n";
+        }
+        if (s == "push_back")
+        {
+            cin >> data;
+            push(head, data,'b');
+            cout << "ok" << "\n";
+        }
+        if (s == "pop_front")
+        {
+            if (!pop(head, data,'f'))cout << "error\n";
+            else cout << data << "\n";
+        }
+        if (s == "pop_back")
+        {
+            if (!pop(head, data,'b'))cout << "error\n";
+            else cout << data << "\n";
+        }
+        if (s == "front")
+        {
+            if (!front(head, data))cout << "error\n";
+            else cout << data << "\n";
+        }
+        if (s == "back")
+        {
+            if (!back(head, data))cout << "error\n";
+            else cout << data << "\n";
+        }
+        if (s == "size")cout << size_(head) << "\n";
+        if (s == "clear")
+        {
+            clear_(head);
+            cout << "ok\n";
+        }
+    }
 }
