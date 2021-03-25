@@ -99,6 +99,25 @@ void out_list(TLinkOne* head)
     cout << "\n";
 }
 
+void pop_etal(TLinkOne* &head, int etal)
+{
+    TLinkOne* temp = head;
+    int cnt = 0;
+    while (temp != NULL)
+    {
+        if (temp->data == etal)
+        {
+            temp = temp->next;
+            pop(head, etal, cnt);
+        }
+        else
+        {
+            temp = temp->next;
+            cnt++;
+        }
+    }
+}
+
 int main()
 {
     ios_base::sync_with_stdio(0);
@@ -108,10 +127,8 @@ int main()
     int len;
     cin >> len;
     fill(head, len);
-    int data;
-    int pos;
-    cin >> pos;
-    pop(head, data, pos - 1);
-    push(head, data, 0);
+    int etalon;
+    cin >> etalon;
+    pop_etal(head, etalon);
     out_list(head);
 }
