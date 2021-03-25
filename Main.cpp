@@ -99,24 +99,7 @@ void out_list(TLinkOne* head)
     cout << "\n";
 }
 
-void pop_etal(TLinkOne* &head, int etal)
-{
-    TLinkOne* temp = head;
-    int cnt = 0;
-    while (temp != NULL)
-    {
-        if (temp->data == etal)
-        {
-            temp = temp->next;
-            pop(head, etal, cnt);
-        }
-        else
-        {
-            temp = temp->next;
-            cnt++;
-        }
-    }
-}
+
 
 int main()
 {
@@ -127,8 +110,10 @@ int main()
     int len;
     cin >> len;
     fill(head, len);
-    int etalon;
-    cin >> etalon;
-    pop_etal(head, etalon);
+    int pos, data;
+    cin >> pos;
+    pop(head, data, pos-1);
+    cin >> pos >> data;
+    push(head, data, pos-1);
     out_list(head);
 }
