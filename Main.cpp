@@ -100,20 +100,42 @@ void out_list(TLinkOne* head)
 }
 
 
+void merge_growth(TLinkOne* a, TLinkOne* b, TLinkOne*& res)
+{
+    clear_(res);
+    while (a != NULL || b != NULL)
+    {
+        if (a != NULL)
+        {
+            if (b == NULL || a->data <= b->data)
+            {
+                push(res, a->data, size_(res));
+                a = a->next;
+            }
+        }
+        if (b != NULL)
+        {
+            if (a == NULL || a->data >= b->data)
+            {
+                push(res, b->data, size_(res));
+                b = b->next;
+            }
+        }
+    }
+}
+
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    TLinkOne* head = NULL;
-    int len;
-    cin >> len;
-    fill(head, len);
-    int pos, data;
-    cin >> pos;
-    pop(head, data, pos-1);
-    cin >> pos >> data;
-    push(head, data, pos-1);
-    out_list(head);
+    TLinkOne* head1 = NULL, * head2 = NULL, *result=NULL;
+    int len1, len2;
+    cin >> len1;
+    fill(head1, len1);
+    cin >> len2;
+    fill(head2, len2);
+    merge_growth(head1, head2, result);
+    out_list(result);
 }
