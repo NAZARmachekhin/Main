@@ -100,26 +100,30 @@ void out_list(TLinkOne* head)
 }
 
 
-void merge_growth(TLinkOne* a, TLinkOne* b, TLinkOne*& res)
+void sum_pol(TLinkOne* a, TLinkOne* b, TLinkOne*& res)
 {
     clear_(res);
     while (a != NULL || b != NULL)
     {
         if (a != NULL)
         {
-            if (b == NULL || a->data <= b->data)
+            if (b == NULL)push(res, a->data, size_(res));
+            else
             {
-                push(res, a->data, size_(res));
-                a = a->next;
+                push(res, a->data + b->data, size_(res));
+                b = b->next;
             }
+            a = a->next;
         }
         if (b != NULL)
         {
-            if (a == NULL || a->data >= b->data)
+            if (a == NULL)push(res, b->data, size_(res));
+            else
             {
-                push(res, b->data, size_(res));
-                b = b->next;
+                push(res, a->data + b->data, size_(res));
+                a = a->next;
             }
+            b = b->next;
         }
     }
 }
@@ -133,9 +137,9 @@ int main()
     TLinkOne* head1 = NULL, * head2 = NULL, *result=NULL;
     int len1, len2;
     cin >> len1;
-    fill(head1, len1);
+    fill(head1, len1+1);
     cin >> len2;
-    fill(head2, len2);
-    merge_growth(head1, head2, result);
+    fill(head2, len2+1);
+    sum_pol(head1, head2, result);
     out_list(result);
 }
