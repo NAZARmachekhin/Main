@@ -7,6 +7,14 @@ struct TLinkOne
     TLinkOne* next;
 };
 
+void push(TLinkOne*& head, int data)
+{
+    TLinkOne* n = new TLinkOne;
+    n->data = data;
+    n->next = head;
+    head = n;
+}
+
 int size_(TLinkOne* head)
 {
     int cnt = 0;
@@ -18,46 +26,13 @@ int size_(TLinkOne* head)
     return cnt;
 }
 
-bool push(TLinkOne*& head, int data, int pos)
-{
-    TLinkOne* n = new TLinkOne;
-    n->data = data;
-    if (pos == 0)
-    {
-        n->next = head;
-        head = n;
-    }
-    else if (pos > size_(head)) return false;
-    else
-    {
-        TLinkOne* cnt = head;
-        for (int i = 1; i < pos; i++)
-            cnt = cnt->next;
-        n->next = cnt->next;
-        cnt->next = n;
-    }
-    return true;
-}
-
-
-bool pop(TLinkOne*& head, int& data, int pos)
+bool pop(TLinkOne*& head, int& data)
 {
     if (size_(head) == 0)return false;
-    if (pos + 1 > size_(head))return false;
-    if (pos == 0)
-    {
-        data = head->data;
-        TLinkOne* temp = head;
-        head = head->next;
-        delete temp;
-        return true;
-    }
-    TLinkOne* temp, * cnt = head;
-    for (int i = 1; i < pos; i++)cnt = cnt->next;
-    temp = cnt->next;
-    cnt->next = temp->next;
-    data = temp->data;
-    delete temp;
+    data = head->data;
+    TLinkOne* n = head;
+    head = head->next;
+    delete n;
     return true;
 }
 
@@ -79,43 +54,44 @@ void clear_(TLinkOne*& top)
     }
 }
 
-void fill(TLinkOne*& head)
+int operate(int a, int b, char action)
 {
-    int data;
-    int zeros=0;
-    int _size = 0;
-    while (cin >> data)
-    {
-        if (data)
-        {
-            push(head, data, _size);
-            _size++;
-        }
-        else zeros++;
-    }
-    for (int i = 0; i < zeros; i++)
-    {
-        push(head, 0, _size);
-        _size++;
-    }
+    if (action == '+')return a + b;
+    if (action == '-')return a - b;
+    if (action == '*')return a * b;
+    return 0;
 }
 
-void out_list(TLinkOne* head)
+bool check_num(string s)
 {
-    while (head != NULL)
-    {
-        cout << head->data << " ";
-        head = head->next;
-    }
-    cout << "\n";
+    if (s.size() == 1 && isdigit(s[0]))return true;
+    if (s.size() > 1)return true;
+    return false;
 }
+
+
 
 int main()
 {
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    TLinkOne* head = NULL;
-    fill(head);
-    out_list(head);
+    TLinkOne* nums = NULL;
+    string s;
+    int num1 = 0, num2 = 0;
+    while (cin >> s)
+    {
+        if (check_num(s))
+        {
+            push(nums, stoll(s));
+        }
+        else
+        {
+            pop(nums, num2);
+            pop(nums, num1);
+            push(nums, operate(num1, num2, s[0]));
+        }
+    }
+    pop(nums, num1);
+    cout << num1 << "\n";
 }
