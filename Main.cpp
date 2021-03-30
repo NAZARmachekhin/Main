@@ -46,22 +46,22 @@ void push(TLinkThree*& head, int data, bool ban_same=false)
     }
 }
 
-void cout_tree(TLinkThree*& head, bool next_line=false)
+int cont_tree(TLinkThree*& head)
 {
     TLinkThree* temp = head;
+    int cnt = 1;
     while (temp->left != NULL)
         temp = temp->left;
     while (temp != head)
     {
-        cout << temp->data << " ";
+        cnt++;
         if (temp->right != NULL)
-            cout_tree(temp->right);
+            cnt+=cont_tree(temp->right);
         temp = temp->parent;
     }
-    cout << head->data << ' ';
     if (head->right != NULL)
-        cout_tree(head->right);
-    if (next_line)cout << "\n";
+        cnt+=cont_tree(head->right);
+    return cnt;
 }
 
 int main()
@@ -77,5 +77,5 @@ int main()
         push(head, number,1);
         cin >> number;
     }
-    cout_tree(head, 1);
+    cout << cont_tree(head) << "\n";
 }
