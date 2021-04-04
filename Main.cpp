@@ -58,16 +58,16 @@ void fill_tree(TLinkThree *&head)
     }
 }
 
-void find_crosses(TLinkThree* head, int& len, int m[])
+void find_brunches(TLinkThree* head, int& len, int m[])
 {
     if (head == NULL)return;
-    find_crosses(head->left, len, m);
-    if (head->left != NULL && head->right != NULL)
+    find_brunches(head->left, len, m);
+    if ((head->left!=NULL && head->right==NULL)||(head->left==NULL && head->right))
     {
         m[len] = head->data;
         len++;
     }
-    find_crosses(head->right, len, m);
+    find_brunches(head->right, len, m);
 }
 
 void out_arr(int m[], int len)
@@ -79,7 +79,7 @@ void out_arr(int m[], int len)
     cout << "\n";
 }
 
-int crosses[100000];
+int brunches[100000];
 int len = 0;
 
 int main()
@@ -89,6 +89,6 @@ int main()
     cout.tie(0);
     TLinkThree* head = NULL;
     fill_tree(head);
-    find_crosses(head, len, crosses);
-    out_arr(crosses, len);
+    find_brunches(head, len, brunches);
+    out_arr(brunches, len);
 }
