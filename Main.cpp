@@ -46,10 +46,6 @@ void push(TLinkThree*& head, int data, bool ban_same = false)
     }
 }
 
-bool is_leave(TLinkThree* test)
-{
-    return (test->left == NULL && test->right == NULL);
-}
 
 void fill_tree(TLinkThree *&head)
 {
@@ -62,17 +58,16 @@ void fill_tree(TLinkThree *&head)
     }
 }
 
-void find_leaves(TLinkThree* head, int& len, int m[])
+void find_crosses(TLinkThree* head, int& len, int m[])
 {
     if (head == NULL)return;
-    if (is_leave(head))
+    find_crosses(head->left, len, m);
+    if (head->left != NULL && head->right != NULL)
     {
+        m[len] = head->data;
         len++;
-        m[len - 1] = head->data;
-        return;
     }
-    find_leaves(head->left, len, m);
-    find_leaves(head->right, len, m);
+    find_crosses(head->right, len, m);
 }
 
 void out_arr(int m[], int len)
@@ -84,7 +79,7 @@ void out_arr(int m[], int len)
     cout << "\n";
 }
 
-int sons[100000];
+int crosses[100000];
 int len = 0;
 
 int main()
@@ -94,6 +89,6 @@ int main()
     cout.tie(0);
     TLinkThree* head = NULL;
     fill_tree(head);
-    find_leaves(head, len, sons);
-    out_arr(sons, len);
+    find_crosses(head, len, crosses);
+    out_arr(crosses, len);
 }
