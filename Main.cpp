@@ -1,19 +1,18 @@
+
 #include <bits/stdc++.h>
 using namespace std;
 
 struct TLinkThree
 {
     int data = 0;
-    string name="";
     TLinkThree* left = NULL, * right = NULL, * parent = NULL;
 };
 
 
-void push(TLinkThree*& head, int data, string name)
+void push(TLinkThree*& head, int data, bool ban_same = false)
 {
     TLinkThree* new_ = new TLinkThree;
     new_->data = data;
-    new_->name = name;
     if (head == NULL)head = new_;
     else
     {
@@ -21,12 +20,8 @@ void push(TLinkThree*& head, int data, string name)
         TLinkThree* temp = head;
         while (!connected)
         {
-            if (name == temp->name)
-            {
-                temp->data += data;
-                connected = true;
-            }
-            if (name < temp->name)
+            if (ban_same && data == temp->data)connected = true;
+            else if (data <= temp->data)
             {
                 if (temp->left == NULL)
                 {
@@ -37,7 +32,7 @@ void push(TLinkThree*& head, int data, string name)
                 else
                     temp = temp->left;
             }
-            if (name > temp->name)
+            else if (data > temp->data)
             {
                 if (temp->right == NULL)
                 {
@@ -52,15 +47,16 @@ void push(TLinkThree*& head, int data, string name)
     }
 }
 
-void cout_money(TLinkThree* head, string name)
+int second_max(TLinkThree* head)
 {
-    while (head!=NULL && head->name != name)
-    {
-        if (name < head->name)head = head->left;
-        else head = head->right;
-    }
-    if (head != NULL)cout << head->data << "\n";
-    else cout << "ERROR\n";
+    while (head->right != NULL)
+        head = head->right;
+    if (head->left == NULL)
+        return head->parent->data;
+    head = head->left;
+    while (head->right != NULL)
+        head = head->right;
+    return head->data;
 }
 
 
@@ -70,21 +66,12 @@ int main()
     cin.tie(0);
     cout.tie(0);
     TLinkThree* head = NULL;
-    int cnt = 0;
-    cin >> cnt;
-    int cmd, money;
-    string name;
-    for (int i = 0; i < cnt; i++)
+    int number = 0;
+    cin >> number;
+    while (number != 0)
     {
-        cin >> cmd>>name;
-        if (cmd == 1)
-        {
-            cin >> money;
-            push(head, money, name);
-        }
-        else
-        {
-            cout_money(head,name);
-        }
+        push(head, number, 1);
+        cin >> number;
     }
+    cout << second_max(head) << "\n";
 }
