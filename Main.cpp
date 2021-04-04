@@ -4,15 +4,16 @@ using namespace std;
 struct TLinkThree
 {
     int data = 0;
-    int cnt = 1;
+    string name="";
     TLinkThree* left = NULL, * right = NULL, * parent = NULL;
 };
 
 
-void push(TLinkThree*& head, int data)
+void push(TLinkThree*& head, int data, string name)
 {
     TLinkThree* new_ = new TLinkThree;
     new_->data = data;
+    new_->name = name;
     if (head == NULL)head = new_;
     else
     {
@@ -20,12 +21,12 @@ void push(TLinkThree*& head, int data)
         TLinkThree* temp = head;
         while (!connected)
         {
-            if (data == temp->data)
+            if (name == temp->name)
             {
-                temp->cnt++;
+                temp->data += data;
                 connected = true;
             }
-            else if (data <= temp->data)
+            if (name < temp->name)
             {
                 if (temp->left == NULL)
                 {
@@ -36,7 +37,7 @@ void push(TLinkThree*& head, int data)
                 else
                     temp = temp->left;
             }
-            else if (data > temp->data)
+            if (name > temp->name)
             {
                 if (temp->right == NULL)
                 {
@@ -51,23 +52,15 @@ void push(TLinkThree*& head, int data)
     }
 }
 
-void cout_tree(TLinkThree* head)
+void cout_money(TLinkThree* head, string name)
 {
-    if (head == NULL)return;
-    cout_tree(head->left);
-    cout << head->data << " " << head->cnt << "\n";
-    cout_tree(head->right);
-}
-
-void fill_tree(TLinkThree*& head)
-{
-    int number;
-    cin >> number;
-    while (number != 0)
+    while (head!=NULL && head->name != name)
     {
-        push(head, number);
-        cin >> number;
+        if (name < head->name)head = head->left;
+        else head = head->right;
     }
+    if (head != NULL)cout << head->data << "\n";
+    else cout << "ERROR\n";
 }
 
 
@@ -77,6 +70,21 @@ int main()
     cin.tie(0);
     cout.tie(0);
     TLinkThree* head = NULL;
-    fill_tree(head);
-    cout_tree(head);
+    int cnt = 0;
+    cin >> cnt;
+    int cmd, money;
+    string name;
+    for (int i = 0; i < cnt; i++)
+    {
+        cin >> cmd>>name;
+        if (cmd == 1)
+        {
+            cin >> money;
+            push(head, money, name);
+        }
+        else
+        {
+            cout_money(head,name);
+        }
+    }
 }
