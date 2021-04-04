@@ -46,13 +46,46 @@ void push(TLinkThree*& head, int data, bool ban_same = false)
     }
 }
 
-int tree_level(TLinkThree* head)
+bool is_leave(TLinkThree* test)
 {
-    if (head == NULL) return 0;
-    int cnt = 1;
-    cnt += max(tree_level(head->left), tree_level(head->right));
-    return cnt;
+    return (test->left == NULL && test->right == NULL);
 }
+
+void fill_tree(TLinkThree *&head)
+{
+    int number;
+    cin >> number;
+    while (number != 0)
+    {
+        push(head, number, 1);
+        cin >> number;
+    }
+}
+
+void find_leaves(TLinkThree* head, int& len, int m[])
+{
+    if (head == NULL)return;
+    if (is_leave(head))
+    {
+        len++;
+        m[len - 1] = head->data;
+        return;
+    }
+    find_leaves(head->left, len, m);
+    find_leaves(head->right, len, m);
+}
+
+void out_arr(int m[], int len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        cout << m[i] << " ";
+    }
+    cout << "\n";
+}
+
+int sons[100000];
+int len = 0;
 
 int main()
 {
@@ -60,12 +93,7 @@ int main()
     cin.tie(0);
     cout.tie(0);
     TLinkThree* head = NULL;
-    int number = 0;
-    cin >> number;
-    while (number != 0)
-    {
-        push(head, number, 1);
-        cin >> number;
-    }
-    cout << tree_level(head) << "\n";
+    fill_tree(head);
+    find_leaves(head, len, sons);
+    out_arr(sons, len);
 }
