@@ -4,11 +4,12 @@ using namespace std;
 struct TLinkThree
 {
     int data = 0;
+    int cnt = 1;
     TLinkThree* left = NULL, * right = NULL, * parent = NULL;
 };
 
 
-void push(TLinkThree*& head, int data, bool ban_same = false)
+void push(TLinkThree*& head, int data)
 {
     TLinkThree* new_ = new TLinkThree;
     new_->data = data;
@@ -19,7 +20,11 @@ void push(TLinkThree*& head, int data, bool ban_same = false)
         TLinkThree* temp = head;
         while (!connected)
         {
-            if (ban_same && data == temp->data)connected = true;
+            if (data == temp->data)
+            {
+                temp->cnt++;
+                connected = true;
+            }
             else if (data <= temp->data)
             {
                 if (temp->left == NULL)
@@ -46,12 +51,12 @@ void push(TLinkThree*& head, int data, bool ban_same = false)
     }
 }
 
-int tree_level(TLinkThree* head)
+void cout_tree(TLinkThree* head)
 {
-    if (head == NULL) return 0;
-    int cnt = 1;
-    cnt += max(tree_level(head->left), tree_level(head->right));
-    return cnt;
+    if (head == NULL)return;
+    cout_tree(head->left);
+    cout << head->data << " " << head->cnt << "\n";
+    cout_tree(head->right);
 }
 
 void fill_tree(TLinkThree*& head)
@@ -60,19 +65,11 @@ void fill_tree(TLinkThree*& head)
     cin >> number;
     while (number != 0)
     {
-        push(head, number, 1);
+        push(head, number);
         cin >> number;
     }
 }
 
-bool test_balanced(TLinkThree* head)
-{
-    if (head == NULL)return true;
-    if (abs(tree_level(head->right) - tree_level(head->left)) > 1)return false;
-    if (!test_balanced(head->left)) return false;
-    if (!test_balanced(head->right)) return false;
-    return true;
-}
 
 int main()
 {
@@ -81,6 +78,5 @@ int main()
     cout.tie(0);
     TLinkThree* head = NULL;
     fill_tree(head);
-    if (test_balanced(head))cout << "YES\n";
-    else cout << "NO\n";
+    cout_tree(head);
 }
