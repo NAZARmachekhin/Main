@@ -8,9 +8,9 @@ struct TLinkThree
 };
 
 
-void push(TLinkThree*& head, int data, bool ban_same=false)
+void push(TLinkThree*& head, int data, bool ban_same = false)
 {
-    TLinkThree * new_ = new TLinkThree;
+    TLinkThree* new_ = new TLinkThree;
     new_->data = data;
     if (head == NULL)head = new_;
     else
@@ -19,7 +19,7 @@ void push(TLinkThree*& head, int data, bool ban_same=false)
         TLinkThree* temp = head;
         while (!connected)
         {
-            if (ban_same && data == temp->data)connected=true;
+            if (ban_same && data == temp->data)connected = true;
             else if (data <= temp->data)
             {
                 if (temp->left == NULL)
@@ -46,21 +46,11 @@ void push(TLinkThree*& head, int data, bool ban_same=false)
     }
 }
 
-int cont_tree(TLinkThree*& head)
+int tree_level(TLinkThree* head)
 {
-    TLinkThree* temp = head;
+    if (head == NULL) return 0;
     int cnt = 1;
-    while (temp->left != NULL)
-        temp = temp->left;
-    while (temp != head)
-    {
-        cnt++;
-        if (temp->right != NULL)
-            cnt+=cont_tree(temp->right);
-        temp = temp->parent;
-    }
-    if (head->right != NULL)
-        cnt+=cont_tree(head->right);
+    cnt += max(tree_level(head->left), tree_level(head->right));
     return cnt;
 }
 
@@ -69,13 +59,13 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    TLinkThree *head = NULL;
+    TLinkThree* head = NULL;
     int number = 0;
     cin >> number;
     while (number != 0)
     {
-        push(head, number,1);
+        push(head, number, 1);
         cin >> number;
     }
-    cout << cont_tree(head) << "\n";
+    cout << tree_level(head) << "\n";
 }
