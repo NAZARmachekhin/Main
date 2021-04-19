@@ -1,63 +1,41 @@
-
 #include <bits/stdc++.h>
 using namespace std;
 
-struct TLinkThree
+struct TLinkOne
 {
-    int data = 0;
-    TLinkThree* left = NULL, * right = NULL, * parent = NULL;
+    long long data = 0;
+    long long stack_minimum = 0;
+    TLinkOne* next;
 };
 
-
-void push(TLinkThree*& head, int data, bool ban_same = false)
+void push(TLinkOne*& head, long long data)
 {
-    TLinkThree* new_ = new TLinkThree;
-    new_->data = data;
-    if (head == NULL)head = new_;
-    else
+    TLinkOne* n = new TLinkOne;
+    n->data = data;
+    n->next = head;
+    n->stack_minimum = n->data;
+    if (head != NULL)
     {
-        bool connected = false;
-        TLinkThree* temp = head;
-        while (!connected)
-        {
-            if (ban_same && data == temp->data)connected = true;
-            else if (data <= temp->data)
-            {
-                if (temp->left == NULL)
-                {
-                    new_->parent = temp;
-                    temp->left = new_;
-                    connected = true;
-                }
-                else
-                    temp = temp->left;
-            }
-            else if (data > temp->data)
-            {
-                if (temp->right == NULL)
-                {
-                    new_->parent = temp;
-                    temp->right = new_;
-                    connected = true;
-                }
-                else
-                    temp = temp->right;
-            }
-        }
+        n->stack_minimum = min(data, head->stack_minimum);
     }
+    head = n;
 }
 
-int second_max(TLinkThree* head)
+bool pop(TLinkOne*& head)
 {
-    while (head->right != NULL)
-        head = head->right;
-    if (head->left == NULL)
-        return head->parent->data;
-    head = head->left;
-    while (head->right != NULL)
-        head = head->right;
-    return head->data;
+    if (head==NULL)return false;
+    TLinkOne* n = head;
+    head = head->next;
+    delete n;
+    return true;
 }
+
+int back_min(TLinkOne* head)
+{
+    if (head==NULL)return 0;
+    return head->stack_minimum;
+}
+
 
 
 int main()
@@ -65,13 +43,19 @@ int main()
     ios_base::sync_with_stdio(0);
     cin.tie(0);
     cout.tie(0);
-    TLinkThree* head = NULL;
-    int number = 0;
-    cin >> number;
-    while (number != 0)
+    TLinkOne* head = NULL;
+    long long a, b, c, x0;
+    long long res = 0;
+    int cnt = 0;
+    cin >> cnt >> a >> b >> c >> x0;
+    for (int i = 0; i < cnt; i++)
     {
-        push(head, number, 1);
-        cin >> number;
+        x0 = (a * x0 * x0 + b * x0 + c) / 100 % 1000000;
+        if (x0 % 5 < 2)
+            pop(head);
+        else
+            push(head, x0);
+        res += back_min(head);
     }
-    cout << second_max(head) << "\n";
+    cout << res << "\n";
 }
