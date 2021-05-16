@@ -1,61 +1,38 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-struct TLinkOne
+void fill_arr(int m[], int& len)
 {
-    long long data = 0;
-    long long stack_minimum = 0;
-    TLinkOne* next;
-};
-
-void push(TLinkOne*& head, long long data)
-{
-    TLinkOne* n = new TLinkOne;
-    n->data = data;
-    n->next = head;
-    n->stack_minimum = n->data;
-    if (head != NULL)
+    cin >> len;
+    for (int i = 0; i < len; i++)
     {
-        n->stack_minimum = min(data, head->stack_minimum);
+        cin >> m[i];
     }
-    head = n;
 }
 
-bool pop(TLinkOne*& head)
+int find_short(int m[], int dp[], int len)
 {
-    if (head==NULL)return false;
-    TLinkOne* n = head;
-    head = head->next;
-    delete n;
-    return true;
+    int dplen = 2;
+    if (len == 2)return m[1] - m[0];
+    dp[0] = m[1] - m[0];
+    dp[1] = m[2] - m[0];
+    for (int i = 2; i < len-1; i++)
+    {
+        dp[dplen] = m[i + 1] - m[i] + min(dp[dplen - 2], dp[dplen - 1]);
+        dplen++;
+    }
+    return dp[dplen - 1];
 }
 
-int back_min(TLinkOne* head)
-{
-    if (head==NULL)return 0;
-    return head->stack_minimum;
-}
-
-
+int dp[10001];
 
 int main()
 {
+    cin.tie(0); 
+    cout.tie(0); 
     ios_base::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
-    TLinkOne* head = NULL;
-    long long a, b, c, x0;
-    long long res = 0;
-    int cnt = 0;
-    cin >> cnt >> a >> b >> c >> x0;
-    for (int i = 0; i < cnt; i++)
-    {
-        x0 = (a * x0 * x0 + b * x0 + c) / 100 % 1000000;
-        if (x0 % 5 < 2)
-            pop(head);
-        else
-            push(head, x0);
-        res += back_min(head);
-    }
-    cout << res << "\n";
+    int len, points[101];
+    fill_arr(points, len);
+    sort(points, points + len);
+    cout << find_short(points, dp, len) << "\n";
 }
