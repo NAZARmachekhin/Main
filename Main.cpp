@@ -1,67 +1,66 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void fill_arr(long long m[1001][1001], int& isize, int& jsize)
+int tree[4000001] = { 0 };
+
+
+void build(int left, int right, int current, int input[])
 {
-    cin >> isize >> jsize;
-    for (int i = 0; i < isize; i++)
-    {
-        for (int j = 0; j < jsize; j++)
-            cin >> m[i][j];
-    }
+	if (left == right)
+	{
+		tree[current] = input[left];
+		return;
+	}
+	int median = ((left + right) >>1);
+	build(left, median, (current <<1), input);
+	build(median+1, right, (current <<1) |1, input);
+	tree[current] = tree[current<<1]+ tree[(current<<1)|1];
 }
 
-void build_route(long long dp[1001][1001], int isize, int jsize)
+void update(int left, int right, int current, int index, int value)
 {
-    for (int i = 0; i < isize; i++)
-    {
-        for (int j = 0; j < jsize; j++)
-        {
-            if (!i && j)dp[i][j] += dp[i][j - 1];
-            if (i && !j)dp[i][j] += dp[i-1][j];
-            if (i && j) dp[i][j] += min(dp[i - 1][j], dp[i][j - 1]);
-        }
-    }
+	if (left == right)
+	{
+		tree[current] = value;
+		return;
+	}
+	int median = (left + right) >> 1;
+	if (index <= median) update(left, median, current << 1, index, value);
+	else update(median + 1, right, (current << 1) + 1, index, value);
+	tree[current] = tree[current << 1]+ tree[(current << 1) + 1];
 }
 
-void find_route(long long dp[1001][1001], int isize, int jsize, int route[3000][2])
+int request(int left, int right, int reqLeft, int reqRight, int current)
 {
-    int i = isize-1, j = jsize-1;
-    while (i >0 || j >0)
-    {
-        route[i + j][0] = i + 1;
-        route[i + j][1] = j + 1;
-        if (!i && j)j--;
-        else if (i && !j)i--;
-        else if (i && j)
-        {
-            if (dp[i][j - 1] > dp[i - 1][j])i--;
-            else j--;
-        }
-    }
-    route[0][0] = 1;
-    route[0][1] = 1;
+	if (reqLeft > reqRight)return 0;
+	//cout << left << " " << right << "    " << reqLeft << " " << reqRight << "\n";
+	if (reqLeft == left && reqRight == right) return tree[current];
+	int median = ((left + right)>>1);
+	//cout << max(left, median + 1) << "\n";
+	return request(left, median, reqLeft, min(reqRight, median), current << 1)+ request(median + 1, right, max(median + 1, reqLeft), reqRight, (current << 1)|1);
 }
 
-void cout_route(long long dp[1001][1001], int isize, int jsize)
+void fill_arr(int m[], int& len)
 {
-    cout << dp[isize - 1][jsize - 1] << "\n";
-    cout << isize + jsize - 1 << "\n";
-    int route[3000][2];
-    find_route(dp, isize, jsize, route);
-    for (int i = 0; i < isize + jsize - 1; i++)
-        cout << route[i][0] << " " << route[i][1] << "\n";
+	cin >> len;
+	for (int i = 0; i < len; i++)cin >> m[i];
 }
 
-long long dp[1001][1001] = { {0} };
+int input[1000001] = { 0 };
 
 int main()
 {
-    cin.tie(0); 
-    cout.tie(0); 
-    ios_base::sync_with_stdio(0);
-    int isize, jsize;
-    fill_arr(dp, isize, jsize);
-    build_route(dp, isize, jsize);
-    cout_route(dp, isize, jsize);
+	cin.tie(0);
+	cout.tie(0);
+	ios_base::sync_with_stdio(0);
+	int len, tests;
+	fill_arr(input, len);
+	build(0, len - 1, 1, input);
+	cin >> tests;
+	for (int i = 0; i < tests; i++)
+	{
+		int left, right;
+		cin >> left >> right;
+		cout << request(0, len-1, left-1, right-1, 1)<<"\n";
+	}
 }
