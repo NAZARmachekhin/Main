@@ -1,18 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int tree[4000001] = { 0 };
-
-int nsd(int a, int b)
-{
-	while (a * b != 0)
-	{
-		if (a < b)swap(a, b);
-		a = a % b;
-	}
-	if (b == 0)return a;
-	return b;
-}
+long long tree[4000001] = { 0 };
 
 
 void build(int left, int right, int current, int input[])
@@ -25,7 +14,7 @@ void build(int left, int right, int current, int input[])
 	int median = ((left + right) >> 1);
 	build(left, median, (current << 1), input);
 	build(median + 1, right, (current << 1) | 1, input);
-	tree[current] = nsd(tree[current << 1], tree[(current << 1) | 1]);
+	tree[current] = tree[current << 1]+ tree[(current << 1) | 1];
 }
 
 void update(int left, int right, int current, int index, int value)
@@ -38,20 +27,20 @@ void update(int left, int right, int current, int index, int value)
 	int median = (left + right) >> 1;
 	if (index <= median) update(left, median, current << 1, index, value);
 	else update(median + 1, right, (current << 1) + 1, index, value);
-	tree[current] = nsd(tree[current << 1], tree[(current << 1) + 1]);
+	tree[current] = tree[current << 1] + tree[(current << 1) + 1];
 }
 
-int request(int left, int right, int reqLeft, int reqRight, int current)
+long long request(int left, int right, int reqLeft, int reqRight, int current)
 {
 	if (reqLeft > reqRight)return 0;
 	if (reqLeft == left && reqRight == right) return tree[current];
 	int median = ((left + right) >> 1);
-	return nsd(request(left, median, reqLeft, min(reqRight, median), current << 1), request(median + 1, right, max(median + 1, reqLeft), reqRight, (current << 1) | 1));
+	return request(left, median, reqLeft, min(reqRight, median), current << 1) + request(median + 1, right, max(median + 1, reqLeft), reqRight, (current << 1) | 1);
 }
 
-void fill_arr(int m[], int& len)
+void fill_arr(int m[], int& len, int &tests)
 {
-	cin >> len;
+	cin >> len>>tests;
 	for (int i = 0; i < len; i++)cin >> m[i];
 }
 
@@ -63,14 +52,18 @@ int main()
 	cout.tie(0);
 	ios_base::sync_with_stdio(0);
 	int len, tests;
-	fill_arr(input, len);
+	fill_arr(input, len,tests);
 	build(0, len - 1, 1, input);
-	cin >> tests;
 	for (int i = 0; i < tests; i++)
 	{
-		int operation, left, right;
-		cin >> operation>>left >> right;
-		if (operation == 1)cout << request(0, len - 1, left - 1, right - 1, 1) << "\n";
-		else update(0, len - 1, 1, left-1, right);
+		int left, right;
+		char req;
+		cin >>req>> left >> right;
+		if (req == '?')cout << request(0, len - 1, left - 1, right - 1, 1) << "\n";
+		else
+		{
+			update(0, len - 1, 1, left-1, right);
+
+		}
 	}
 }
